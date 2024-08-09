@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="manipulatorMobileApp.MainPage"
+             BackgroundColor="Black">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="SAVE"
+                     Clicked="SaveServer_Clicked"/>
+        <ToolbarItem Text="START"
+                     x:Name="startToolbar"
+                     Clicked="StartWorking_Clicked"/>
+    </ContentPage.ToolbarItems>
+    <StackLayout>
+        <StackLayout BackgroundColor="Lavender"
+                         Padding="10,10,10,10">
+            <!--"{AppThemeBinding Light=Gray, Dark=White}"-->
+            <Editor Placeholder="Server name (optional)"
+                    PlaceholderColor="Gray"
+                    TextColor="Gray"
+                    x:Name="hostName"
+                    MaxLength="45"/>
+            <Editor Placeholder="IP Address"
+                    PlaceholderColor="Gray"
+                    TextColor="Gray"
+                    x:Name="hostIP"
+                    MaxLength="15"/>
+            <Editor Placeholder="Port"
+                    PlaceholderColor="Gray"
+                    TextColor="Gray"
+                    x:Name="hostPort"
+                    MaxLength="6"/>
+            <Button Margin="10"
+                    CornerRadius="10"
+                    Clicked="SaveServer_Clicked"
+                    Text="SAVE"/>
+        </StackLayout>
+        <RefreshView x:Name="refreshLists"
+                 Refreshing="RefreshLists_Refreshing">
+            <CollectionView x:Name="collectionView"
+                            Margin="10"
+                            SelectionMode="Single"
+                            SelectionChanged="CollectionView_SelectionChanged"
+                            EmptyView="No servers to display">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical"
+                                       ItemSpacing="10"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <SwipeView BackgroundColor="Black">
+                            <SwipeView.RightItems>
+                                <SwipeItem Text="Delete"
+                                           BackgroundColor="Red"
+                                           Invoked="OnDelete"
+                                           CommandParameter="{Binding .}"/>
+                            </SwipeView.RightItems>
+                            <StackLayout>
+                                <Label Text="{Binding name}"
+                                       x:Name="NoteTextLabel"
+                                       FontSize="Medium"
+                                       TextColor="White"
+                                       HeightRequest="44"/>
+                                <Label Text="{Binding Date}"
+                                       x:Name="NoteDateLabel"
+                                       TextColor="Silver"
+                                       FontSize="Small"/>
+                            </StackLayout>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+        <StackLayout BackgroundColor="Lavender"
+                     Padding="10,10,10,10">
+            <Button x:Name="startWorking"
+                    Text="START"
+                    CornerRadius="10"
+                    Clicked="StartWorking_Clicked"/>
+        </StackLayout>
+    </StackLayout>
+</ContentPage>

@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="manipulatorMobileApp.Views.NotesPage"
+             BackgroundColor="Black">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add"
+                     Order="Primary"
+                     x:Name="AddButton"
+                     Clicked="AddButton_Clicked"/>
+        <ToolbarItem Text="Edit mode"
+                     Order="Secondary"
+                     x:Name="editMode"
+                     Clicked="EditMode_Clicked"/>
+        <ToolbarItem Text="Default Buttons"
+                     Order="Secondary"
+                     x:Name="defaultBtn"
+                     Clicked="DefaultBtn_Clicked"/>
+        <ToolbarItem Text="Delete All"
+                     Order="Secondary"
+                     x:Name="DeleteAllNotes"
+                     Clicked="DeleteAllNotes_Clicked"/>
+    </ContentPage.ToolbarItems>
+    <RefreshView x:Name="refreshLists"
+                 Refreshing="RefreshLists_Refreshing">
+        <StackLayout>
+            <SearchBar x:Name="notesSearchBar"
+                       SearchButtonPressed="Handle_SearchButtonPressed"
+                       TextChanged="NotesSearchBar_TextChanged"
+                       Placeholder="Search..."
+                       BackgroundColor="Gray"/>
+            <CollectionView x:Name="collectionView"
+                            Margin="10"
+                            SelectionMode="Single"
+                            SelectionChanged="CollectionView_SelectionChanged"
+                            EmptyView="No records to display">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical"
+                                       ItemSpacing="10"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <SwipeView BackgroundColor="Black">
+                            <SwipeView.RightItems>
+                                <SwipeItem Text="Delete"
+                                           BackgroundColor="Red"
+                                           Invoked="OnDelete"
+                                           CommandParameter="{Binding .}"/>
+                            </SwipeView.RightItems>
+                            <StackLayout>
+                                <Label Text="{Binding Title}"
+                                       x:Name="NoteTextLabel"
+                                       FontSize="Medium"
+                                       TextColor="White"
+                                       HeightRequest="44"/>
+                                <Label Text="{Binding Date}"
+                                       x:Name="NoteDateLabel"
+                                       TextColor="Silver"
+                                       FontSize="Small"/>
+                            </StackLayout>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+    </RefreshView>
+</ContentPage>

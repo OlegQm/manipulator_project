@@ -1,0 +1,14 @@
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\bin\Release\net8.0\linux-arm64\manipulatorServerPart
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\bin\Release\net8.0\linux-arm64\manipulatorServerPart.deps.json
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\bin\Release\net8.0\linux-arm64\manipulatorServerPart.runtimeconfig.json
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\bin\Release\net8.0\linux-arm64\manipulatorServerPart.dll
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\bin\Release\net8.0\linux-arm64\manipulatorServerPart.pdb
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\obj\Release\net8.0\linux-arm64\manipulatorServerPart.GeneratedMSBuildEditorConfig.editorconfig
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\obj\Release\net8.0\linux-arm64\manipulatorServerPart.AssemblyInfoInputs.cache
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\obj\Release\net8.0\linux-arm64\manipulatorServerPart.AssemblyInfo.cs
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\obj\Release\net8.0\linux-arm64\manipulatorServerPart.csproj.CoreCompileInputs.cache
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\obj\Release\net8.0\linux-arm64\manipulatorServerPart.dll
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\obj\Release\net8.0\linux-arm64\refint\manipulatorServerPart.dll
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\obj\Release\net8.0\linux-arm64\manipulatorServerPart.pdb
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\obj\Release\net8.0\linux-arm64\manipulatorServerPart.genruntimeconfig.cache
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\obj\Release\net8.0\linux-arm64\ref\manipulatorServerPart.dll

@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="manipulatorMobileApp.Views.NoteAddingPage"
+             Title="Record"
+             BackgroundColor="Black">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="Clear"
+                     Order="Primary"
+                     Text="Clear all text"
+                     Clicked="Clear_Clicked"/>
+        <ToolbarItem x:Name="ReplaceDoubleSpaces"
+                     Order="Secondary"
+                     Text="Remove double spaces"
+                     Clicked="ReplaceDoubleSpaces_Clicked"/>
+        <ToolbarItem x:Name="ScrollToEnd"
+                     Order="Secondary"
+                     Text="Scroll to end"
+                     Clicked="ScrollToEnd_Clicked"/>
+        <ToolbarItem x:Name="ScrollToBegin"
+                     Order="Secondary"
+                     Text="Scroll to begin"
+                     Clicked="ScrollToBegin_Clicked"/>
+        <ToolbarItem x:Name="TextOptions"
+                     Order="Secondary"
+                     Text="Change text color"
+                     Clicked="TextOptions_Clicked"/>
+        <ToolbarItem x:Name="BackgroundOptions"
+                     Order="Secondary"
+                     Text="Change background color"
+                     Clicked="BackgroundOptions_Clicked"/>
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <StackLayout>
+            <ScrollView x:Name="Scroll">
+                <StackLayout>
+                    <Editor Placeholder="Title"
+                            x:Name="TitleEditor"
+                            Text="{Binding Title}"
+                            AutoSize="TextChanges"
+                            MaxLength="45"
+                            FontSize="25"
+                            Margin="10"
+                            TextColor="White"
+                            TextChanged="TitleEditor_TextChanged"/>
+                    <Editor Placeholder="Note text"
+                            x:Name="NoteEditor"
+                            Text="{Binding Text}"
+                            AutoSize="TextChanges"
+                            FontSize="18"
+                            Margin="10"
+                            TextColor="White"
+                            TextChanged="NoteEditor_TextChanged"/>
+                    <Grid ColumnDefinitions="*, *">
+                        <Button Grid.Column="0"
+                                x:Name="SaveButton"
+                                Text="Save"
+                                Clicked="OnSaveButton_Clicked"/>
+                        <Button Grid.Column="1"
+                                x:Name="DeleteButton"
+                                Text="Delete"
+                                Clicked="OnDeleteButton_Clicked"/>
+                    </Grid>
+                </StackLayout>
+            </ScrollView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

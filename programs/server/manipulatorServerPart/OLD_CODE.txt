@@ -1,0 +1,154 @@
+using System;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+
+namespace manipulatorServerPart
+{
+    class Program
+    {
+        private static TcpClient client;
+        private static TcpListener listener;
+        private static string ipString;
+        private const int SERVER_PORT = 1234;
+
+        private static void sendData(byte[] data, NetworkStream stream)
+        {
+            int bufferSize = 1024;
+            byte[] dataLength = BitConverter.GetBytes(data.Length);
+            stream.Write(dataLength, 0, 4);
+            int bytesSent = 0;
+            int bytesLeft = data.Length;
+            while (bytesLeft > 0)
+            {
+                int curDataSize = Math.Min(bufferSize, bytesLeft);
+                stream.Write(data, bytesSent, curDataSize);
+                bytesSent += curDataSize;
+                bytesLeft -= curDataSize;
+            }
+        }
+
+        static string ExtractWordBetweenTags(string input, string startTag, string endTag)
+        {
+            int startIndex = input.IndexOf(startTag) + startTag.Length;
+            int endIndex = input.IndexOf(endTag, startIndex);
+            if (startIndex >= 0 && endIndex >= 0)
+                return input.Substring(startIndex, endIndex - startIndex);
+            return null;
+        }
+
+        private static void clientWaiting()
+        {
+            IPAddress[] localIp = Dns.GetHostAddresses(Dns.GetHostName());
+            foreach (IPAddress address in localIp)
+            {
+                if (address.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    ipString = address.ToString();
+                }
+            }
+            IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ipString), SERVER_PORT);
+            listener.Start();
+            client = listener.AcceptTcpClient();
+            Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} - Connected to client!\n");
+        }
+
+        private static void Disconnect()
+        {
+            NetworkStream stream = client.GetStream();
+            listener.Stop();
+            ((IDisposable)client).Dispose();
+            client.Close();
+            ((IDisposable)stream).Dispose();
+            stream.Close();
+        }
+
+        private static void Main(string[] args)
+        {
+            IPAddress[] localIp = Dns.GetHostAddresses(Dns.GetHostName());
+            foreach (IPAddress address in localIp)
+            {
+                if (address.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    ipString = address.ToString();
+                }
+            }
+            IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ipString), SERVER_PORT);
+            listener = new TcpListener(ep);
+            listener.Start();
+            Console.WriteLine(@"  
+                             ===================================================  
+                             Started listening requests at: {0}:{1}  
+                             ===================================================",
+                             ep.Address, ep.Port);
+            client = listener.AcceptTcpClient();
+            Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} - Connected to client!\n");
+            while (client.Connected)
+            {
+                try
+                {
+                    string maxObj = "<OBJ>baseball glove</OBJ><DISC_ME>";
+                    int bytesize = Encoding.ASCII.GetBytes(maxObj).Length;
+                    byte[] buffer = new byte[bytesize];
+                    string x = client.GetStream().Read(buffer, 0, bytesize).ToString();
+                    string data = ASCIIEncoding.ASCII.GetString(buffer);
+                    if (data.ToUpper().Contains("<OBJ>"))
+                    {
+                        string word = ExtractWordBetweenTags(data, "<OBJ>", "</OBJ>");
+                        try
+                        {
+                            File.WriteAllText("words_file.txt", word);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("File error");
+                        }
+                        Console.WriteLine(word);
+                    }
+                    if (data.ToUpper().Contains("<TSC>"))
+                    {
+                        string imgPath = "currentObjectsScreenshot.jpg";
+                        using (FileStream imgStream = File.OpenRead(imgPath))
+                        using (MemoryStream memStream = new MemoryStream())
+                        {
+                            imgStream.CopyTo(memStream);
+                            sendData(memStream.ToArray(), client.GetStream());
+                        }
+                        Console.WriteLine("Image sent to the client." + "\n");
+
+                        using (NetworkStream stream = client.GetStream())
+                        {
+                            string textPath = "currentObjects.txt";
+                            string textToSend = File.ReadAllText(textPath);
+                            byte[] textBytes = System.Text.Encoding.UTF8.GetBytes(textToSend);
+                            stream.Write(textBytes, 0, textBytes.Length);
+                            Console.WriteLine("Text sent to the client." + "\n");
+                        }
+
+                        if (client.Connected)
+                            Disconnect();
+                        if (!client.Connected)
+                            Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} - Disconnected from client!\n");
+                        clientWaiting();
+                    }
+                    if (data.ToUpper().Contains("<DISC_ME>"))
+                    {
+                        if (client.Connected)
+                            Disconnect();
+                        if (!client.Connected)
+                            Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss")} - Disconnected from client!\n");
+                        clientWaiting();
+                    }
+                }
+                catch (Exception except)
+                {
+                    Disconnect();
+                    if (!client.Connected) Console.WriteLine(
+                        $"{DateTime.Now.ToString("HH:mm:ss")} - Disconnected from client!\nError: {except.Message}");
+                }
+            }
+            Console.WriteLine("Disconnected from client");
+        }
+    }
+}

@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="manipulatorMobileApp.Views.ScreenshotPage"
+             BackgroundColor="Gray">
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <StackLayout BackgroundColor="Lavender"
+                         Grid.Row="0">
+                <Button Text="SCREENSHOT"
+                        x:Name="screenshot"
+                        VerticalOptions="Center"
+                        CornerRadius="10"
+                        Margin="10"
+                        Clicked="Screenshot_Clicked"/>
+                <Image x:Name="imageView"/>
+            </StackLayout>
+            <CollectionView x:Name="availableObjects"
+                            Grid.Row="1"
+                            Margin="10"
+                            SelectionMode="Single"
+                            BackgroundColor="Black"
+                            EmptyView="No objects available"
+                            SelectionChanged="AvailableObjects_SelectionChanged">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical"
+                                        ItemSpacing="10"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <SwipeView BackgroundColor="Black">
+                            <StackLayout>
+                                <Label x:Name="objectTextLabel"
+                                        Padding="10,10,10,10"
+                                        Text="{Binding Word}"
+                                        FontSize="Medium"
+                                        TextColor="White"
+                                        LineBreakMode="WordWrap"/>
+                            </StackLayout>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

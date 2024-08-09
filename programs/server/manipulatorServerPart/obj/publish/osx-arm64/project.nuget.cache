@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "cSaC43fPg3Qa5Oj59bKHWW6soD80kC+oQ59q6lTMLjcF5YofP6SiECeERexfUemej1/jtdPJ3mu7trPiG2T2xQ==",
+  "success": true,
+  "projectFilePath": "F:\\Manipulator\\small_manipulator\\programs\\server\\manipulatorServerPart\\manipulatorServerPart.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\olegq\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.1\\microsoft.net.illink.tasks.8.0.1.nupkg.sha512",
+    "C:\\Users\\olegq\\.nuget\\packages\\microsoft.netcore.app.host.osx-arm64\\8.0.1\\microsoft.netcore.app.host.osx-arm64.8.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
