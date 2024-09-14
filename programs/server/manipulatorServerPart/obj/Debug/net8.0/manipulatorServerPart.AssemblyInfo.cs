@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("manipulatorServerPart")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1e5ed41237e9c1093729f12706a16bb2f726e7f0")]
 [assembly: System.Reflection.AssemblyProductAttribute("manipulatorServerPart")]
 [assembly: System.Reflection.AssemblyTitleAttribute("manipulatorServerPart")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

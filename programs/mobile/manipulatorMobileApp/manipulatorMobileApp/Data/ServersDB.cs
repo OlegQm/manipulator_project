@@ -49,13 +49,12 @@ namespace manipulatorMobileApp.Data
             }
         }
 
-        public async Task<bool> GetServerNameAvailibiltyAsync(string name)
+        public async Task<Server> FindRecordByName(string name)
         {
-            var server = await db.Table<Server>()
+            Server server = await db.Table<Server>()
                                   .Where(i => i.name == name)
                                   .FirstOrDefaultAsync();
-
-            return server == null;
+            return server;
         }
 
         public async Task<bool> GetServerIPAvailibiltyAsync(string IP)
@@ -70,14 +69,21 @@ namespace manipulatorMobileApp.Data
         public Task<int> SaveServerAsync(Server server)
         {
             if (server.ID != 0)
+            {
                 return db.UpdateAsync(server);
-            else
-                return db.InsertAsync(server);
+            }
+            return db.InsertAsync(server);
         }
 
         public Task<int> DeleteServerAsync(Server server)
         {
             return db.DeleteAsync(server);
+        }
+
+        public async Task DeleteAllRecords()
+        {
+            await db.DropTableAsync<Server>();
+            await db.CreateTableAsync<Server>();
         }
     }
 }

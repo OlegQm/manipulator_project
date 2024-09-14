@@ -9,10 +9,6 @@ namespace manipulatorMobileApp.Views
     [QueryProperty(nameof(ItemId), nameof(ItemId))]
     public partial class NoteAddingPage : ContentPage
     {
-        private bool ItemsRemovable = true;
-        private bool IsFirstChange = true;
-        private bool NoteTextFirstAdding = true;
-
         public string ItemId
         {
             set
@@ -114,12 +110,6 @@ namespace manipulatorMobileApp.Views
             Record note = BindingContext as Record;
             note.Date = DateTime.Now;
             RefreshRecord(note);
-
-            if (ItemsRemovable && !IsFirstChange)
-            {
-                NoteTextFirstAdding = true;
-            }
-            IsFirstChange = false;
         }
 
         private void TitleEditor_TextChanged(object sender, TextChangedEventArgs e)

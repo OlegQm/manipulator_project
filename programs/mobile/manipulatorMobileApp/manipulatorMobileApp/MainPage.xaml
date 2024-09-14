@@ -4,16 +4,21 @@
              x:Class="manipulatorMobileApp.MainPage"
              BackgroundColor="Black">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="SAVE"
-                     Clicked="SaveServer_Clicked"/>
-        <ToolbarItem Text="START"
+        <ToolbarItem Text="Start"
+                     Order="Secondary"
                      x:Name="startToolbar"
                      Clicked="StartWorking_Clicked"/>
+        <ToolbarItem Text="Save"
+                     Order="Secondary"
+                     Clicked="SaveServer_Clicked"/>
+        <ToolbarItem Text="Delete All"
+                     Order="Secondary"
+                     x:Name="deleteAll"
+                     Clicked="deleteAll_Clicked"/>
     </ContentPage.ToolbarItems>
     <StackLayout>
         <StackLayout BackgroundColor="Lavender"
                          Padding="10,10,10,10">
-            <!--"{AppThemeBinding Light=Gray, Dark=White}"-->
             <Editor Placeholder="Server name (optional)"
                     PlaceholderColor="Gray"
                     TextColor="Gray"
@@ -35,35 +40,35 @@
                     Text="SAVE"/>
         </StackLayout>
         <RefreshView x:Name="refreshLists"
-                 Refreshing="RefreshLists_Refreshing">
+                        Refreshing="RefreshLists_Refreshing">
             <CollectionView x:Name="collectionView"
-                            Margin="10"
-                            SelectionMode="Single"
-                            SelectionChanged="CollectionView_SelectionChanged"
-                            EmptyView="No servers to display">
+                                Margin="10"
+                                SelectionMode="Single"
+                                SelectionChanged="CollectionView_SelectionChanged"
+                                EmptyView="No servers to display">
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout Orientation="Vertical"
-                                       ItemSpacing="10"/>
+                                            ItemSpacing="10"/>
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <SwipeView BackgroundColor="Black">
                             <SwipeView.RightItems>
                                 <SwipeItem Text="Delete"
-                                           BackgroundColor="Red"
-                                           Invoked="OnDelete"
-                                           CommandParameter="{Binding .}"/>
+                                                BackgroundColor="Red"
+                                                Invoked="OnDelete"
+                                                CommandParameter="{Binding .}"/>
                             </SwipeView.RightItems>
                             <StackLayout>
                                 <Label Text="{Binding name}"
-                                       x:Name="NoteTextLabel"
-                                       FontSize="Medium"
-                                       TextColor="White"
-                                       HeightRequest="44"/>
+                                            x:Name="NoteTextLabel"
+                                            FontSize="Medium"
+                                            TextColor="White"
+                                            HeightRequest="44"/>
                                 <Label Text="{Binding Date}"
-                                       x:Name="NoteDateLabel"
-                                       TextColor="Silver"
-                                       FontSize="Small"/>
+                                            x:Name="NoteDateLabel"
+                                            TextColor="Silver"
+                                            FontSize="Small"/>
                             </StackLayout>
                         </SwipeView>
                     </DataTemplate>

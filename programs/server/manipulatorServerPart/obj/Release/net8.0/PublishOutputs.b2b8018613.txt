@@ -1,0 +1,5 @@
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\bin\Release\net8.0\manipulatorServerPart.exe
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\bin\Release\net8.0\manipulatorServerPart.dll
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\bin\Release\net8.0\manipulatorServerPart.deps.json
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\bin\Release\net8.0\manipulatorServerPart.runtimeconfig.json
+F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\bin\Release\net8.0\manipulatorServerPart.pdb

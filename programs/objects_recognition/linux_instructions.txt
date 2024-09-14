@@ -19,16 +19,16 @@ unzip ~/Downloads/yolov8_recognizer_manipulator.zip -d ~/manipulator
 
 ----- Libraries installation -----
 
-python3 -m venv myenv
+python3 -m venv --system-site-packages myenv
 source myenv/bin/activate
 pip install numpy==1.24.4
 sudo apt update
 sudo apt install python3-opencv libopencv-dev
-pip install urllib3==1.26.5
 pip install pyserial
 pip install cvzone==1.6.1
-pip install git+https://github.com/ultralytics/ultralytics.git@main
+pip install ultralytics==8.2.0
 pip install lapx==0.5.2
+pip install picamera2
 
 ----- Thonny installation ----- (if you are want and if Raspberry Pi doesn't contain it)
 
@@ -45,11 +45,12 @@ code
 
 Download the python package in VS Code and open the "yolov8_recognizer_manipulator" folder in it
 
-Press Ctrl+Shift+P, choose "Select Interpreter", then choose the environment as shown in the screenshot below
+Press Ctrl+Shift+P, choose "Select Interpreter", then choose environment
 
 ----- Dotnet installation -----
 
-Download the version of dotnet for your system to ~/Downloads: https://dotnet.microsoft.com/download/dotnet/8.0 (in my case Arm64 binaries (dotnet-sdk-8.0.201-linux-arm64.tar.gz))
+Download the version of dotnet for your system to ~/Downloads: https://dotnet.microsoft.com/download/dotnet/8.0
+(in my case Arm64 binaries (dotnet-sdk-8.0.201-linux-arm64.tar.gz))
 
 mkdir ~/dotnet-core
 tar zxf ~/Downloads/dotnet-sdk-3.1.426-linux-x64.tar.gz -C ~/dotnet-core
@@ -90,11 +91,11 @@ Terminal=true
 
 ----- Transfering data -----
 
-scp F:/Manipulator/small_manipulator/programs/objects_recognition/yolov8_recognizer_manipulator/models/new_models.zip olegqm@192.168.86.93:/home/olegqm/manipulator/yolov8_recognizer_manipulator/models
+scp path_from user_name@rpi_ip_address:path_to
 
 ----- Connecting with VNC -----
 
-ssh olegqm@192.168.86.93 -> enter "yes"
+ssh user@ip_address -> enter "yes"
 sudo raspi-config -> Interface Options -> VNC -> yes
 sudo raspi-config -> System options -> Boot / Auto login -> Desktop Autologin
 Finish -> yes

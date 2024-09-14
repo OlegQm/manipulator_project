@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -12,20 +13,21 @@ namespace manipulatorServerPart
         private static TcpListener listener;
 
         private const int SERVER_PORT = 1234;
+        private const int LONGEST_WORD_LENGTH = 51;
         private static string ipString;
         private const string OBJECT_OPEN = "<OBJ>";
         private const string OBJECT_CLOSE = "</OBJ>";
         private const string DISCONNECT = "<DISC_ME>";
         private const string GET_IMG = "<TSC>";
-        private const string LONGEST_WORD = "baseball glove";
         private const string IMG_PATH = "currentObjectsScreenshot.jpg";
+        private const string SCREENSHOT_REUQEST_FOLDER = "screenshot_request";
 
         static bool isFileLocked(string filePath)
         {
             try
             {
                 using (FileStream fs = File.Open(filePath, FileMode.Open,
-                                       FileAccess.ReadWrite, FileShare.None))
+                        FileAccess.ReadWrite, FileShare.None))
                 {
                     return false;
                 }
@@ -60,6 +62,46 @@ namespace manipulatorServerPart
             }
         }
 
+        public static void ResetFolderFiles(string directoryPath)
+        {
+            try
+            {
+                string[] files = Directory.GetFiles(directoryPath);
+                string defaultFile = Path.Combine(directoryPath, "0");
+                foreach (string file in files)
+                {
+                    File.Delete(file);
+                }
+                File.Create(defaultFile).Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+        private static void RenameFile(string directoryPath)
+        {
+            try
+            {
+                string oldFilePath = Path.Combine(directoryPath, "0");
+                string newFilePath = Path.Combine(directoryPath, "1");
+                if (!File.Exists(oldFilePath))
+                {
+                    if (!File.Exists(newFilePath))
+                    {
+                        File.Create(newFilePath).Close();
+                    }
+                    return;
+                }
+                File.Move(oldFilePath, newFilePath);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
         private static void SendData(byte[] data, NetworkStream stream)
         {
             int bufferSize = 1024;
@@ -79,19 +121,14 @@ namespace manipulatorServerPart
         private static void GetLocalIPAddress()
         {
             IPAddress[] localIp = Dns.GetHostAddresses(Dns.GetHostName());
-            foreach (IPAddress address in localIp)
-            {
-                if (address.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    ipString = address.ToString();
-                }
-            }
+            ipString = localIp
+                .LastOrDefault(address => address.AddressFamily == AddressFamily.InterNetwork)?
+                .ToString();
         }
 
         private static void ClientWaiting()
         {
             GetLocalIPAddress();
-            IPEndPoint ep = new IPEndPoint(IPAddress.Parse(ipString), SERVER_PORT);
             listener.Start();
             client = listener.AcceptTcpClient();
             Console.WriteLine($"\n{DateTime.Now.ToString("HH:mm:ss")} " +
@@ -107,18 +144,20 @@ namespace manipulatorServerPart
                     NetworkStream stream = client.GetStream();
                     if (stream != null)
                     {
+                        stream.Flush();
                         stream.Close();
-                        stream.Dispose();
                     }
-
+                    
                     client.Close();
-                    client.Dispose();
                 }
 
                 if (error == null)
                 {
-                    Console.WriteLine($"{DateTime.Now:HH:mm:ss} - " +
-                        $"Disconnected from client!\n");
+                    if (!client.Connected)
+                    {
+                        Console.WriteLine($"{DateTime.Now:HH:mm:ss} - " +
+                            $"Disconnected from client!\n");
+                    }
                 }
                 else
                 {
@@ -150,15 +189,14 @@ namespace manipulatorServerPart
 
         private static void Main(string[] args)
         {
+            ResetFolderFiles(SCREENSHOT_REUQEST_FOLDER);
             TryToConnect();
-            string maxObj = OBJECT_OPEN + LONGEST_WORD + OBJECT_CLOSE + DISCONNECT;
             while (client.Connected)
             {
                 try
                 {
-                    int bytesize = Encoding.ASCII.GetBytes(maxObj).Length;
-                    byte[] buffer = new byte[bytesize];
-                    string x = client.GetStream().Read(buffer, 0, bytesize).ToString();
+                    byte[] buffer = new byte[LONGEST_WORD_LENGTH];
+                    string x = client.GetStream().Read(buffer, 0, LONGEST_WORD_LENGTH).ToString();
                     string data = ASCIIEncoding.ASCII.GetString(buffer);
 
                     if (data.ToUpper().Contains(OBJECT_OPEN))
@@ -169,7 +207,7 @@ namespace manipulatorServerPart
 
                     if (data.ToUpper().Contains(GET_IMG))
                     {
-                        SavingToFile("screenshotRequest.txt", GET_IMG);
+                        RenameFile(SCREENSHOT_REUQEST_FOLDER);
                         while (!File.Exists(IMG_PATH) || isFileLocked(IMG_PATH)) { }
                         using (FileStream imgStream = File.OpenRead(IMG_PATH))
                         {
@@ -189,7 +227,6 @@ namespace manipulatorServerPart
                             Console.WriteLine("Text sent to the client.");
                         }
 
-                        //File.Delete(IMG_PATH);
                         Disconnect();
                         ClientWaiting();
                     }
@@ -199,9 +236,9 @@ namespace manipulatorServerPart
                         ClientWaiting();
                     }
                 }
-                catch (Exception except)
+                catch (Exception ex)
                 {
-                    Disconnect(except.Message.ToString());
+                    Disconnect(ex.Message.ToString());
                 }
             }
             Console.WriteLine("Disconnected from client");

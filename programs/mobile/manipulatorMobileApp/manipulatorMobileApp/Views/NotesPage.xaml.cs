@@ -17,11 +17,34 @@ namespace manipulatorMobileApp.Views
         private string IP;
         private string port;
         private bool isEditMode = false;
+        private const string OBJECT_OPEN = "<OBJ>";
+        private const string OBJECT_CLOSE = "</OBJ>";
+        private const string DISCONNECT = "<DISC_ME>";
         public NotesPage(string recievedIP, string recievedPort)
         {
             InitializeComponent();
             this.IP = recievedIP;
             this.port = recievedPort;
+        }
+
+        private void closeConversation(TcpClient client)
+        {
+            try
+            {
+                if (client != null && client.Connected)
+                {
+                    var stream = client.GetStream();
+                    if (stream != null)
+                    {
+                        stream.Close();
+                    }
+                    client.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                DependencyService.Get<IToast>().Show($"An error occurred when trying to close the conversation: {ex.Message}");
+            }
         }
 
         private async Task<bool> RequestConnectToServer(string ip, string string_port)
@@ -96,6 +119,7 @@ namespace manipulatorMobileApp.Views
             }
             catch (Exception ex)
             {
+                closeConversation(client);
                 DependencyService.Get<IToast>().Show($"Request sending error\nDetails: {ex.Message}");
                 return false;
             }
@@ -177,17 +201,35 @@ namespace manipulatorMobileApp.Views
 
         private async Task HandleNonEditMode(Record record)
         {
-            bool _isConnected = await RequestConnectToServer(IP, port);
-            if (!_isConnected)
-                return;
-
-            TcpClient client = Connection.Instance.client;
-            string msge = "<OBJ>" + record.Title + "</OBJ><DISC_ME>";
-            bool sendObj = SendMsg(client, msge);
-            if (sendObj)
+            TcpClient client = null;
+            try
             {
-                client.GetStream().Close();
-                client.Close();
+                bool _isConnected = await RequestConnectToServer(IP, port);
+                if (!_isConnected)
+                    return;
+                client = Connection.Instance.client;
+                string msge = OBJECT_OPEN + record.Title + OBJECT_CLOSE + DISCONNECT;
+                bool sendObj = SendMsg(client, msge);
+                if (sendObj)
+                {
+                    await client.GetStream().FlushAsync();
+                    closeConversation(client);
+                }
+            }
+            catch (SocketException ex)
+            {
+                closeConversation(client);
+                DependencyService.Get<IToast>().Show("SocketException: " + ex.Message);
+            }
+            catch (IOException ex)
+            {
+                closeConversation(client);
+                DependencyService.Get<IToast>().Show("IOException: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                closeConversation(client);
+                DependencyService.Get<IToast>().Show("Exception: " + ex.Message);
             }
         }
 

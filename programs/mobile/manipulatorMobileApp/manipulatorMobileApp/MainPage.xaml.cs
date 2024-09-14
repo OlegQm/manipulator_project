@@ -14,6 +14,14 @@ namespace manipulatorMobileApp
             hostIP.Text = server.IPParam;
             hostPort.Text = server.portParam;
         }
+
+        private async void RefreshCollection()
+        {
+            var items = await App.ServersDB.GetServersAsync();
+            collectionView.ItemsSource = items;
+            int itemsNumber = items.Count();
+            collectionView.ScrollTo(items[itemsNumber - 1], position: ScrollToPosition.End, animate: true);
+        }
         public MainPage()
         {
             InitializeComponent();
@@ -25,23 +33,27 @@ namespace manipulatorMobileApp
             {
                 Server server = await App.ServersDB.GetLastRecord();
                 if (server != null)
+                {
                     SetEditorsParameters(server);
+                }
+                RefreshCollection();
             }
-            collectionView.ItemsSource = await App.ServersDB.GetServersAsync();
+
             base.OnAppearing();
         }
 
         private bool IpChecking(string ip)
         {
-            if (!string.IsNullOrWhiteSpace(ip) && ip.IndexOf(".") != -1 &&
-                !ip.Any(c => char.IsLetter(c)))
-            {
-                int pointsCounter = 0;
-                for (int i = 0; i < ip.Length; i++)
-                    if (ip[i] == '.') pointsCounter++;
-                return pointsCounter == 3;
-            }
-            return false;
+            if (string.IsNullOrWhiteSpace(ip))
+                return false;
+
+            if (ip.Any(c => !char.IsDigit(c) && c != '.'))
+                return false;
+
+            if (ip.Count(c => c == '.') != 3)
+                return false;
+
+            return true;
         }
 
         private bool PortChecking(string port)
@@ -80,31 +92,45 @@ namespace manipulatorMobileApp
                 await App.ServersDB.DeleteServerAsync(server);
                 collectionView.ItemsSource = await App.ServersDB.GetServersAsync();
             }
-            else return;
+            else
+            {
+                return;
+            }
         }
 
         private async void SaveServer_Clicked(object sender, EventArgs e)
         {
-            if (IpChecking(hostIP.Text) && PortChecking(hostPort.Text))
+            if (!IpChecking(hostIP.Text) || !PortChecking(hostPort.Text))
             {
-                Server server = new Server();
-                bool isServerNameFree = await App.ServersDB.GetServerNameAvailibiltyAsync(hostName.Text);
-                if (!string.IsNullOrWhiteSpace(hostName.Text) && isServerNameFree)
-                    server.name = hostName.Text;
-                if (!isServerNameFree)
-                    DependencyService.Get<IToast>().Show("This server name already exists");
-                else if (string.IsNullOrWhiteSpace(hostName.Text))
-                    server.name = Convert.ToString(DateTime.Now);
-                if (isServerNameFree)
+                DependencyService.Get<IToast>().Show("Impossible Host or IP");
+                return;
+            }
+            Server server = new Server();
+            Server existingRecord = await App.ServersDB.FindRecordByName(hostName.Text);
+            bool isServerNameFree = existingRecord == null;
+            if (isServerNameFree)
+            {
+                server.name = !string.IsNullOrWhiteSpace(hostName.Text) ? hostName.Text : Convert.ToString(DateTime.Now);
+                server.IPParam = hostIP.Text;
+                server.portParam = hostPort.Text;
+                server.Date = DateTime.Now;
+                await App.ServersDB.SaveServerAsync(server);
+                collectionView.ItemsSource = await App.ServersDB.GetServersAsync();
+            }
+            else
+            {
+                bool result = await DisplayAlert("Choose option",
+                                                 "Replace existing record?",
+                                                 "Replace",
+                                                 "Cancel");
+                if (result)
                 {
-                    server.IPParam = hostIP.Text;
-                    server.portParam = hostPort.Text;
-                    server.Date = DateTime.Now;
-                    await App.ServersDB.SaveServerAsync(server);
-                    collectionView.ItemsSource = await App.ServersDB.GetServersAsync();
+                    existingRecord.IPParam = hostIP.Text;
+                    existingRecord.Date = DateTime.Now;
+                    await App.ServersDB.SaveServerAsync(existingRecord);
+                    RefreshCollection();
                 }
             }
-            else DependencyService.Get<IToast>().Show("Impossible Host or IP");
         }
 
         private async void StartWorking_Clicked(object sender, EventArgs e)
@@ -119,6 +145,19 @@ namespace manipulatorMobileApp
                 startToolbar.IsEnabled = true;
             }
             else DependencyService.Get<IToast>().Show("Impossible Host or IP");
+        }
+
+        private async void deleteAll_Clicked(object sender, EventArgs e)
+        {
+            bool result = await DisplayAlert("Choose option",
+                                             "Are you sure you want to delete all hosts?",
+                                             "Yes",
+                                             "Cancel");
+            if (result)
+            {
+                await App.ServersDB.DeleteAllRecords();
+                collectionView.ItemsSource = null;
+            }
         }
     }
 }
