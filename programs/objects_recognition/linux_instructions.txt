@@ -25,7 +25,7 @@ sudo apt update
 sudo apt install python3-opencv libopencv-dev
 
 Then manually execute commands below or use:
-pip install -r requirements/requirements.txt
+pip install -r yolov8_recognizer_manipulator/requirements/requirements.txt
 
 pip install numpy==1.24.4
 pip install pyserial==3.5
@@ -36,7 +36,7 @@ pip install picamera2==0.3.18
 
 ----- Thonny installation ----- (if you want and if Raspberry Pi doesn't contain it)
 
-sudo pip3 install thonny
+sudo pip install thonny
 
 ----- VS Code installation ----- (if you want, you can use VS Code instead of Thonny)
 

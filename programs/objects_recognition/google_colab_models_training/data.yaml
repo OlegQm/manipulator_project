@@ -1,0 +1,17 @@
+nc: 9
+
+names:
+  0: apple
+  1: bear
+  2: bird
+  3: dog
+  4: boar
+  5: cat
+  6: cow
+  7: raccoon
+  8: deer
+
+path: /content/dataset_yolov8/dataset_yolo/
+train: images/train
+val: images/valid
+test: images/test
