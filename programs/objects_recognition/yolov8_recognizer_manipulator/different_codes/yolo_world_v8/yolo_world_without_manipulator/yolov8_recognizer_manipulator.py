@@ -18,7 +18,7 @@ GET_IMG_COMMAND = "<TSC>"
 FORMED_IMG_NAME = "currentObjectsScreenshot.jpg"
 COMMAND_FILE_PATH = "screenshotRequest.txt"
 CURRENT_OBJECTS_PATH = "currentObjects.txt"
-MODEL_PATH = "models/yolov8s-world.pt"
+MODEL_PATH = "models/dataset_v2_models/yolov8s-world.pt"
 EMPTY_LINE = ""
 
 STOP_RADIUS = 85
