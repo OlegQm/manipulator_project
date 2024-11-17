@@ -10,6 +10,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using OpenAI.Chat;
 using OpenAI;
+using Xamarin.Forms.Shapes;
 
 namespace manipulatorMobileApp.Views
 {
@@ -22,14 +23,32 @@ namespace manipulatorMobileApp.Views
         private const string OBJECT_OPEN = "<OBJ>";
         private const string OBJECT_CLOSE = "</OBJ>";
         private const string DISCONNECT = "<DISC_ME>";
-        private readonly ChatClient _client;
+        private ChatClient _client;
         public NotesPage(string recievedIP, string recievedPort)
         {
             InitializeComponent();
             this.IP = recievedIP;
             this.port = recievedPort;
+        }
 
-            _client = new ChatClient(model: "gpt-4o", "sk-DDMekhUZ2Xnw89sxGHwJ5HLpkLZcelpFy-17AvbawGT3BlbkFJA_9oR4j-r_Y22tbH6iHKVip5H0TZAPtVZm9vxJVecA");
+        private async Task<string> getAPIKey()
+        {
+            string fileName = "api_key.txt";
+            string filePath = DependencyService.Get<IFileHelper>().GetFilePath(fileName);
+            string key = "default";
+            if (File.Exists(filePath))
+            {
+                using (StreamReader reader = new StreamReader(filePath))
+                {
+                    key = await reader.ReadLineAsync();
+                    key = key.Trim();
+                }
+            }
+            else
+            {
+                DependencyService.Get<IToast>().Show("Cannot read api key");
+            }
+            return key;
         }
 
         private void closeConversation(TcpClient client)
@@ -131,6 +150,8 @@ namespace manipulatorMobileApp.Views
         protected override async void OnAppearing()
         {
             collectionView.ItemsSource = await App.RecordsDB.GetNotesAsync();
+            string apiKey = await getAPIKey();
+            _client = new ChatClient(model: "gpt-4o", apiKey: apiKey);
             base.OnAppearing();
         }
 

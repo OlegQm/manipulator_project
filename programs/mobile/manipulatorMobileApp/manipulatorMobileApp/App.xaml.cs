@@ -95,7 +95,7 @@ namespace manipulatorMobileApp
             }
             else
             {
-                DependencyService.Get<IToast>().Show("File error");
+                DependencyService.Get<IToast>().Show("Cannot read objects names");
             }
         }
 
