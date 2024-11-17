@@ -377,7 +377,12 @@ namespace manipulatorMobileApp.Views
                 refreshLists.IsRefreshing = true;
                 string promptResult = await sendPrompt(string.Join(", ", App.GlobalWordsArray), result);
                 string[] wordsArray = promptResult.Split(' ');
-                collectionView.ItemsSource = await App.RecordsDB.FilterRecordsByKeywordsAsync(wordsArray);
+                List<Record> filteredItems = null;
+                if (promptResult.IndexOf("Error:") == -1)
+                {
+                    filteredItems = await App.RecordsDB.FilterRecordsByKeywordsAsync(wordsArray);
+                }
+                collectionView.ItemsSource = filteredItems;
                 refreshLists.IsRefreshing = false;
             }
         }
