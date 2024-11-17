@@ -34,7 +34,7 @@
         <StackLayout>
             <ScrollView x:Name="Scroll">
                 <StackLayout>
-                    <Editor Placeholder="Title"
+                    <Editor Placeholder="Object name"
                             x:Name="TitleEditor"
                             Text="{Binding Title}"
                             AutoSize="TextChanges"
@@ -43,7 +43,7 @@
                             Margin="10"
                             TextColor="White"
                             TextChanged="TitleEditor_TextChanged"/>
-                    <Editor Placeholder="Note text"
+                    <Editor Placeholder="Object Description"
                             x:Name="NoteEditor"
                             Text="{Binding Text}"
                             AutoSize="TextChanges"

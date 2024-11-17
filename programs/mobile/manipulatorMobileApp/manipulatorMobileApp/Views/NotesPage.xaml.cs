@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using OpenAI.Chat;
+using OpenAI;
 
 namespace manipulatorMobileApp.Views
 {
@@ -20,11 +22,14 @@ namespace manipulatorMobileApp.Views
         private const string OBJECT_OPEN = "<OBJ>";
         private const string OBJECT_CLOSE = "</OBJ>";
         private const string DISCONNECT = "<DISC_ME>";
+        private readonly ChatClient _client;
         public NotesPage(string recievedIP, string recievedPort)
         {
             InitializeComponent();
             this.IP = recievedIP;
             this.port = recievedPort;
+
+            _client = new ChatClient(model: "gpt-4o", "sk-DDMekhUZ2Xnw89sxGHwJ5HLpkLZcelpFy-17AvbawGT3BlbkFJA_9oR4j-r_Y22tbH6iHKVip5H0TZAPtVZm9vxJVecA");
         }
 
         private void closeConversation(TcpClient client)
@@ -73,7 +78,7 @@ namespace manipulatorMobileApp.Views
             }
         }
 
-        private async void AddStandardWords(string path)
+        private async void AddStandardWords()
         {
             try
             {
@@ -85,19 +90,17 @@ namespace manipulatorMobileApp.Views
                 if (result)
                 {
                     await App.RecordsDB.DeleteAllRecords();
-                    using (StreamReader reader = new StreamReader(path))
+                    foreach (string word in App.GlobalWordsArray)
                     {
-                        while (!reader.EndOfStream)
+                        Record record = new Record
                         {
-                            string word = reader.ReadLine();
-                            Record record = new Record();
-                            record.Title = word;
-                            record.Text = null;
-                            record.Date = DateTime.Now;
-                            await App.RecordsDB.SaveNoteAsync(record);
-                        }
-                        collectionView.ItemsSource = await App.RecordsDB.GetNotesAsync();
+                            Title = word,
+                            Text = null,
+                            Date = DateTime.Now
+                        };
+                        await App.RecordsDB.SaveNoteAsync(record);
                     }
+                    collectionView.ItemsSource = await App.RecordsDB.GetNotesAsync();
                 }
             }
             catch (Exception ex)
@@ -287,17 +290,75 @@ namespace manipulatorMobileApp.Views
         private void DefaultBtn_Clicked(object sender, EventArgs e)
         {
             refreshLists.IsRefreshing = true;
-            string fileName = "coco.names";
-            string filePath = DependencyService.Get<IFileHelper>().GetFilePath(fileName);
-            if (File.Exists(filePath))
-            {
-                AddStandardWords(filePath);
-            }
-            else
-            {
-                DependencyService.Get<IToast>().Show("File error");
-            }
+            AddStandardWords();
             refreshLists.IsRefreshing = false;
+        }
+
+        private async Task<string> sendPrompt(string objectsAsString, string description)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(objectsAsString))
+                {
+                    throw new ArgumentException("The list of objects cannot be null or empty.", nameof(objectsAsString));
+                }
+                if (string.IsNullOrWhiteSpace(description))
+                {
+                    throw new ArgumentException("The description cannot be null or empty.", nameof(description));
+                }
+
+                string prompt = $"I have a list of objects: {objectsAsString}. " +
+                                $"Based on the description \"{description}\", " +
+                                $"please return the matching words from the list separated by a space. " +
+                                $"Return only the matching words, nothing else." +
+                                $"If the word is not in the list or any other error occurs, return the word \"Unknown\"";
+
+                ChatCompletion completion = await _client.CompleteChatAsync(prompt);
+
+                if (completion == null || completion.Content == null || completion.Content.Count == 0)
+                {
+                    throw new InvalidOperationException("The response from the API was empty or invalid.");
+                }
+
+                return completion.Content[0].Text.Trim();
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"Invalid argument: {ex.Message}");
+                return "Error: Invalid input.";
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"API error: {ex.Message}");
+                return "Error: API returned an invalid response.";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+                return "Error: An unexpected error occurred.";
+            }
+        }
+
+        private async void PromptButton_Clicked(object sender, EventArgs e)
+        {
+            string result = await DisplayPromptAsync(
+                "Enter an object description",
+                "You can describe an object in natural language",
+                "Ready!",
+                "Cancel",
+                "Object description",
+                maxLength: 100,
+                keyboard: Keyboard.Text,
+                initialValue: ""
+            );
+            if (!String.IsNullOrEmpty(result) && !String.IsNullOrEmpty(result))
+            {
+                refreshLists.IsRefreshing = true;
+                string promptResult = await sendPrompt(string.Join(", ", App.GlobalWordsArray), result);
+                string[] wordsArray = promptResult.Split(' ');
+                collectionView.ItemsSource = await App.RecordsDB.FilterRecordsByKeywordsAsync(wordsArray);
+                refreshLists.IsRefreshing = false;
+            }
         }
     }
 }

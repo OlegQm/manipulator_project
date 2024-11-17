@@ -1,6 +1,8 @@
 ﻿using manipulatorMobileApp.Models;
 using SQLite;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace manipulatorMobileApp.Data
@@ -43,6 +45,20 @@ namespace manipulatorMobileApp.Data
         {
             await db.DropTableAsync<Record>();
             await db.CreateTableAsync<Record>();
+        }
+
+        public async Task<List<Record>> FilterRecordsByKeywordsAsync(string[] keywords)
+        {
+            if (keywords == null || keywords.Length == 0)
+                return null;
+
+            var allRecords = await GetNotesAsync();
+
+            return allRecords
+                .Where(record => keywords.Any(keyword =>
+                    !string.IsNullOrWhiteSpace(record.Title) &&
+                    record.Title.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0))
+                .ToList();
         }
     }
 }

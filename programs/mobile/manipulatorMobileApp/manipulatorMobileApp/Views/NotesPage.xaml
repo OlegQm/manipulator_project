@@ -8,6 +8,10 @@
                      Order="Primary"
                      x:Name="AddButton"
                      Clicked="AddButton_Clicked"/>
+        <ToolbarItem Text="Filter by prompt"
+                     Order="Secondary"
+                     x:Name="PromptButton"
+                     Clicked="PromptButton_Clicked"/>
         <ToolbarItem Text="Edit mode"
                      Order="Secondary"
                      x:Name="editMode"

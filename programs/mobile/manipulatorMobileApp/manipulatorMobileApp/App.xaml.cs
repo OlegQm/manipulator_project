@@ -1,9 +1,11 @@
 ﻿using manipulatorMobileApp.Data;
 using manipulatorMobileApp.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace manipulatorMobileApp
@@ -12,6 +14,8 @@ namespace manipulatorMobileApp
     {
         static RecordsDB notesDB;
         static ServersDB serversDB;
+
+        public static string[] GlobalWordsArray { get; private set; }
 
         public static RecordsDB RecordsDB
         {
@@ -58,6 +62,22 @@ namespace manipulatorMobileApp
             }
         }
 
+        public static async Task LoadWordsAsync(string path)
+        {
+            List<string> words = new List<string>();
+
+            using (StreamReader reader = new StreamReader(path))
+            {
+                while (!reader.EndOfStream)
+                {
+                    string word = await reader.ReadLineAsync();
+                    words.Add(word);
+                }
+            }
+
+            GlobalWordsArray = words.ToArray();
+        }
+
         public App()
         {
             InitializeComponent();
@@ -65,8 +85,18 @@ namespace manipulatorMobileApp
             MainPage = new NavigationPage(new MainPage());
         }
 
-        protected override void OnStart()
+        protected override async void OnStart()
         {
+            string fileName = "names.names";
+            string filePath = DependencyService.Get<IFileHelper>().GetFilePath(fileName);
+            if (File.Exists(filePath))
+            {
+                await LoadWordsAsync(filePath);
+            }
+            else
+            {
+                DependencyService.Get<IToast>().Show("File error");
+            }
         }
 
         protected override void OnSleep()

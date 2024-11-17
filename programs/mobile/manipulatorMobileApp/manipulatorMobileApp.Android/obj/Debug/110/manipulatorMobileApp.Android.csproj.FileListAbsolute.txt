@@ -1785,7 +1785,6 @@ F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulato
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\R.txt
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\R.cs.flag
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\manipulatorMobileApp.Android.csproj.CoreCompileInputs.cache
-F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\manipulatorMobileApp.Android.csproj.CopyComplete
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\manipulatorMobileApp.Android.dll
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\manipulatorMobileApp.Android.pdb
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\android\bin\com.companyname.manipulatormobileapp.apk
@@ -2343,3 +2342,13 @@ F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulato
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\stamp\_GenerateJavaStubs.stamp
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\stamp\_GeneratePackageManagerJava.stamp
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\stamp\_ResolveLibraryProjectImports.stamp
+F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\manipula.6F71768F.Up2Date
+F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\android\assets\Microsoft.Bcl.AsyncInterfaces.dll
+F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\android\assets\OpenAI.dll
+F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\android\assets\System.ClientModel.dll
+F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\android\assets\System.Diagnostics.DiagnosticSource.dll
+F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\android\assets\System.IO.Pipelines.dll
+F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\android\assets\System.Memory.Data.dll
+F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\android\assets\System.Text.Encodings.Web.dll
+F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\android\assets\System.Text.Json.dll
+F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp.Android\obj\Debug\110\android\assets\System.Threading.Tasks.Extensions.dll
