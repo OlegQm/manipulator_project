@@ -58,13 +58,25 @@
               "version": "[2.0.3, )",
               "autoReferenced": true
             },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
             "OpenAI": {
               "target": "Package",
               "version": "[2.0.0, )"
             },
+            "SkiaSharp": {
+              "target": "Package",
+              "version": "[2.88.9, )"
+            },
             "System.Text.Json": {
               "target": "Package",
               "version": "[9.0.0, )"
+            },
+            "Xam.Plugin.Media": {
+              "target": "Package",
+              "version": "[6.0.2, )"
             },
             "Xamarin.Essentials": {
               "target": "Package",

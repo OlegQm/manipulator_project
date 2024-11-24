@@ -7,6 +7,7 @@ public class MonoPackageManager_Resources {
 		"manipulatorMobileApp.dll",
 		"Microsoft.Bcl.AsyncInterfaces.dll",
 		"OpenAI.dll",
+		"Plugin.Media.dll",
 		"SQLite-net.dll",
 		"SQLitePCLRaw.batteries_v2.dll",
 		"SQLitePCLRaw.core.dll",

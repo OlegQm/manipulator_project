@@ -12,6 +12,10 @@
                      Order="Secondary"
                      x:Name="PromptButton"
                      Clicked="PromptButton_Clicked"/>
+        <ToolbarItem Text="Filter by photo"
+                     Order="Secondary"
+                     x:Name="PhotoPromptButton"
+                     Clicked="PhotoPromptButton_Clicked"/>
         <ToolbarItem Text="Edit mode"
                      Order="Secondary"
                      x:Name="editMode"
