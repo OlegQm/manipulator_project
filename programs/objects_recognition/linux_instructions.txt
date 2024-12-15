@@ -103,3 +103,8 @@ ssh user@ip_address -> enter "yes"
 sudo raspi-config -> Interface Options -> VNC -> yes
 sudo raspi-config -> System options -> Boot / Auto login -> Desktop Autologin
 Finish -> yes
+
+----- Camera rotation -----
+
+sudo nano /boot/firmware/config.txt
+dtoverlay=ov5647,rotation=180 # ov5647 is your camera's name
