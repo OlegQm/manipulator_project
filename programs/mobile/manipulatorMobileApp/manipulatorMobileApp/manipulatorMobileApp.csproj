@@ -28,9 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Views\ModeSelectionPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
     <EmbeddedResource Update="Views\NoteAddingPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>

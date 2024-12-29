@@ -3,32 +3,24 @@
   "WorkspaceRootPath": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|f:\\manipulator\\small_manipulator\\programs\\mobile\\manipulatormobileapp\\manipulatormobileapp\\views\\notespage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|solutionrelative:manipulatormobileapp\\views\\notespage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|f:\\manipulator\\small_manipulator\\programs\\mobile\\manipulatormobileapp\\manipulatormobileapp\\mainpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|solutionrelative:manipulatormobileapp\\mainpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|f:\\manipulator\\small_manipulator\\programs\\mobile\\manipulatormobileapp\\manipulatormobileapp\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|solutionrelative:manipulatormobileapp\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|f:\\manipulator\\small_manipulator\\programs\\mobile\\manipulatormobileapp\\manipulatormobileapp\\mainpage.xaml||{2974C621-7033-421A-B08A-11D27B021D1B}",
+      "RelativeMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|solutionrelative:manipulatormobileapp\\mainpage.xaml||{2974C621-7033-421A-B08A-11D27B021D1B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|f:\\manipulator\\small_manipulator\\programs\\mobile\\manipulatormobileapp\\manipulatormobileapp\\views\\notespage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|solutionrelative:manipulatormobileapp\\views\\notespage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|f:\\manipulator\\small_manipulator\\programs\\mobile\\manipulatormobileapp\\manipulatormobileapp\\views\\screenshotpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|solutionrelative:manipulatormobileapp\\views\\screenshotpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|f:\\manipulator\\small_manipulator\\programs\\mobile\\manipulatormobileapp\\manipulatormobileapp\\views\\notespage.xaml||{2974C621-7033-421A-B08A-11D27B021D1B}",
       "RelativeMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|solutionrelative:manipulatormobileapp\\views\\notespage.xaml||{2974C621-7033-421A-B08A-11D27B021D1B}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|f:\\manipulator\\small_manipulator\\programs\\mobile\\manipulatormobileapp\\manipulatormobileapp\\data\\recordsdb.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|solutionrelative:manipulatormobileapp\\data\\recordsdb.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|f:\\manipulator\\small_manipulator\\programs\\mobile\\manipulatormobileapp\\manipulatormobileapp\\views\\noteaddingpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|solutionrelative:manipulatormobileapp\\views\\noteaddingpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|f:\\manipulator\\small_manipulator\\programs\\mobile\\manipulatormobileapp\\manipulatormobileapp\\views\\noteaddingpage.xaml||{2974C621-7033-421A-B08A-11D27B021D1B}",
-      "RelativeMoniker": "D:0:0:{FA213C90-3636-43E3-AE00-291335AC2605}|manipulatorMobileApp\\manipulatorMobileApp.csproj|solutionrelative:manipulatormobileapp\\views\\noteaddingpage.xaml||{2974C621-7033-421A-B08A-11D27B021D1B}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,17 +30,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "MainPage.xaml.cs",
               "DocumentMoniker": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\MainPage.xaml.cs",
               "RelativeDocumentMoniker": "manipulatorMobileApp\\MainPage.xaml.cs",
               "ToolTip": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\MainPage.xaml.cs",
               "RelativeToolTip": "manipulatorMobileApp\\MainPage.xaml.cs",
-              "ViewState": "AgIAAGMAAAAAAAAAAAAIwHwAAAA7AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-09-01T21:51:19.479Z",
               "IsPinned": true,
@@ -56,80 +48,52 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "App.xaml.cs",
-              "DocumentMoniker": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\App.xaml.cs",
-              "RelativeDocumentMoniker": "manipulatorMobileApp\\App.xaml.cs",
-              "ToolTip": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\App.xaml.cs",
-              "RelativeToolTip": "manipulatorMobileApp\\App.xaml.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAAwBEAAABFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-17T16:21:28.085Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "RecordsDB.cs",
-              "DocumentMoniker": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\Data\\RecordsDB.cs",
-              "RelativeDocumentMoniker": "manipulatorMobileApp\\Data\\RecordsDB.cs",
-              "ToolTip": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\Data\\RecordsDB.cs",
-              "RelativeToolTip": "manipulatorMobileApp\\Data\\RecordsDB.cs",
-              "ViewState": "AgIAACoAAAAAAAAAAAAuwDYAAAAzAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-17T15:58:55.462Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "NotesPage.xaml.cs",
-              "DocumentMoniker": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\Views\\NotesPage.xaml.cs",
-              "RelativeDocumentMoniker": "manipulatorMobileApp\\Views\\NotesPage.xaml.cs",
-              "ToolTip": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\Views\\NotesPage.xaml.cs",
-              "RelativeToolTip": "manipulatorMobileApp\\Views\\NotesPage.xaml.cs",
-              "ViewState": "AgIAAAgCAAAAAAAAAAAowBoCAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-17T16:53:07.737Z",
+              "DocumentIndex": 1,
+              "Title": "MainPage.xaml",
+              "DocumentMoniker": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\MainPage.xaml",
+              "RelativeDocumentMoniker": "manipulatorMobileApp\\MainPage.xaml",
+              "ToolTip": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\MainPage.xaml",
+              "RelativeToolTip": "manipulatorMobileApp\\MainPage.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-12-29T14:47:35.963Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "ScreenshotPage.xaml.cs",
+              "DocumentMoniker": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\Views\\ScreenshotPage.xaml.cs",
+              "RelativeDocumentMoniker": "manipulatorMobileApp\\Views\\ScreenshotPage.xaml.cs",
+              "ToolTip": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\Views\\ScreenshotPage.xaml.cs",
+              "RelativeToolTip": "manipulatorMobileApp\\Views\\ScreenshotPage.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAOEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-28T15:56:15.231Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "NotesPage.xaml",
               "DocumentMoniker": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\Views\\NotesPage.xaml",
               "RelativeDocumentMoniker": "manipulatorMobileApp\\Views\\NotesPage.xaml",
               "ToolTip": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\Views\\NotesPage.xaml",
               "RelativeToolTip": "manipulatorMobileApp\\Views\\NotesPage.xaml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAA6AAAAAAAAAA==",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAAB0AAAA3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-03-18T18:38:29.443Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-18T18:38:29.443Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "NoteAddingPage.xaml",
-              "DocumentMoniker": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\Views\\NoteAddingPage.xaml",
-              "RelativeDocumentMoniker": "manipulatorMobileApp\\Views\\NoteAddingPage.xaml",
-              "ToolTip": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\Views\\NoteAddingPage.xaml",
-              "RelativeToolTip": "manipulatorMobileApp\\Views\\NoteAddingPage.xaml",
-              "ViewState": "AgIAABIAAAAAAAAAACBjwC0AAAA7AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2024-08-30T20:23:25.941Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "NoteAddingPage.xaml.cs",
-              "DocumentMoniker": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\Views\\NoteAddingPage.xaml.cs",
-              "RelativeDocumentMoniker": "manipulatorMobileApp\\Views\\NoteAddingPage.xaml.cs",
-              "ToolTip": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\Views\\NoteAddingPage.xaml.cs",
-              "RelativeToolTip": "manipulatorMobileApp\\Views\\NoteAddingPage.xaml.cs",
-              "ViewState": "AgIAACsAAAAAAAAAAAAkwHAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "NotesPage.xaml.cs",
+              "DocumentMoniker": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\Views\\NotesPage.xaml.cs",
+              "RelativeDocumentMoniker": "manipulatorMobileApp\\Views\\NotesPage.xaml.cs",
+              "ToolTip": "F:\\Manipulator\\small_manipulator\\programs\\mobile\\manipulatorMobileApp\\manipulatorMobileApp\\Views\\NotesPage.xaml.cs",
+              "RelativeToolTip": "manipulatorMobileApp\\Views\\NotesPage.xaml.cs",
+              "ViewState": "AgIAABQAAAAAAAAAAAAAAB0AAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-30T20:17:40.498Z",
+              "WhenOpened": "2024-11-17T16:53:07.737Z",
               "EditorCaption": ""
             }
           ]

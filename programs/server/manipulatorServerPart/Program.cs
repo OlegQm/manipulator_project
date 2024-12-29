@@ -20,6 +20,7 @@ namespace manipulatorServerPart
         private const string DISCONNECT = "<DISC_ME>";
         private const string GET_IMG = "<TSC>";
         private const string IMG_PATH = "currentObjectsScreenshot.jpg";
+        private const string LABELS_PATH = "currentObjects.txt";
         private const string SCREENSHOT_REUQEST_FOLDER = "screenshot_request";
 
         static bool isFileLocked(string filePath)
@@ -221,7 +222,7 @@ namespace manipulatorServerPart
 
                         using (NetworkStream stream = client.GetStream())
                         {
-                            string textToSend = File.ReadAllText("currentObjects.txt");
+                            string textToSend = File.ReadAllText(LABELS_PATH);
                             byte[] textBytes = System.Text.Encoding.UTF8.GetBytes(textToSend);
                             stream.Write(textBytes, 0, textBytes.Length);
                             Console.WriteLine("Text sent to the client.");

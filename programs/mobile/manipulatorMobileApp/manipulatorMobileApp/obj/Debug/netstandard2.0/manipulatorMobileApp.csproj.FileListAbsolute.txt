@@ -43,7 +43,6 @@ F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulato
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp\obj\Debug\netstandard2.0\manipulatorMobileApp.GeneratedMSBuildEditorConfig.editorconfig
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp\obj\Debug\netstandard2.0\App.xaml.g.cs
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp\obj\Debug\netstandard2.0\MainPage.xaml.g.cs
-F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp\obj\Debug\netstandard2.0\Views\ModeSelectionPage.xaml.g.cs
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp\obj\Debug\netstandard2.0\Views\NoteAddingPage.xaml.g.cs
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp\obj\Debug\netstandard2.0\Views\NotesPage.xaml.g.cs
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp\obj\Debug\netstandard2.0\Views\ScreenshotPage.xaml.g.cs

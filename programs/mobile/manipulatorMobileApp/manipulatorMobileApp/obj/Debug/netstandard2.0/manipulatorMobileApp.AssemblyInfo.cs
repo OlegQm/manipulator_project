@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("manipulatorMobileApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eccb1683d3c94e149b375613e39538df21679617")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+01f6793618574b78519a0f3a98678442c2730f8c")]
 [assembly: System.Reflection.AssemblyProductAttribute("manipulatorMobileApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("manipulatorMobileApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

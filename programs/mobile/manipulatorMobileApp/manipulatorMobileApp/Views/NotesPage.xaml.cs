@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -21,20 +20,16 @@ namespace manipulatorMobileApp.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NotesPage : ContentPage
     {
-        private string IP;
-        private string port;
         private bool isEditMode = false;
-        private const string OBJECT_OPEN = "<OBJ>";
-        private const string OBJECT_CLOSE = "</OBJ>";
-        private const string DISCONNECT = "<DISC_ME>";
         private const string apiEndpoint = "https://api.openai.com/v1/chat/completions";
         private string key = "default";
         private ChatClient _clientText;
-        public NotesPage(string recievedIP, string recievedPort)
+
+        private const string BotToken = "7527925090:AAH8tATQ2tyOR6kbRjJQwA64nnhT5Nanzrs";
+        private const string ChatId = "-1002422483060";
+        public NotesPage()
         {
             InitializeComponent();
-            this.IP = recievedIP;
-            this.port = recievedPort;
         }
 
         private async Task getAPIKey()
@@ -53,52 +48,6 @@ namespace manipulatorMobileApp.Views
             else
             {
                 DependencyService.Get<IToast>().Show("Cannot read api key");
-            }
-        }
-
-        private void closeConversation(TcpClient client)
-        {
-            try
-            {
-                if (client != null && client.Connected)
-                {
-                    var stream = client.GetStream();
-                    if (stream != null)
-                    {
-                        stream.Close();
-                    }
-                    client.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                DependencyService.Get<IToast>().Show($"An error occurred when trying to close the conversation: {ex.Message}");
-            }
-        }
-
-        private async Task<bool> RequestConnectToServer(string ip, string string_port)
-        {
-            try
-            {
-                TcpClient client = new TcpClient();
-                int port = Convert.ToInt32(string_port);
-                await Task.Run(() => client.ConnectAsync(ip, port));
-                if (client.Connected)
-                {
-                    Connection.Instance.client = client;
-                    return true;
-                }
-                else
-                {
-                    DependencyService.Get<IToast>().Show("Connection unsuccessful\n" +
-                                                         "Please, try again");
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                DependencyService.Get<IToast>().Show(ex.Message);
-                return false;
             }
         }
 
@@ -130,25 +79,6 @@ namespace manipulatorMobileApp.Views
             catch (Exception ex)
             {
                 DependencyService.Get<IToast>().Show($"An error occurred:\n{ex.Message}");
-            }
-        }
-
-        private bool SendMsg(TcpClient client, string msge)
-        {
-            try
-            {
-                NetworkStream stream = client.GetStream();
-                string msg = msge;
-                byte[] message = Encoding.ASCII.GetBytes(msg);
-                stream.Write(message, 0, message.Length);
-                DependencyService.Get<IToast>().Show($"Request was successfully sent to:\n{IP}:{port}");
-                return true;
-            }
-            catch (Exception ex)
-            {
-                closeConversation(client);
-                DependencyService.Get<IToast>().Show($"Request sending error\nDetails: {ex.Message}");
-                return false;
             }
         }
 
@@ -228,44 +158,71 @@ namespace manipulatorMobileApp.Views
             notesSearchBar.Text = null;
         }
 
-        private async Task HandleNonEditMode(Record record)
+        private async Task SendMessageToTelegram(string message)
         {
-            TcpClient client = null;
             try
             {
-                bool _isConnected = await RequestConnectToServer(IP, port);
-                if (!_isConnected)
-                    return;
-                client = Connection.Instance.client;
-                string msge = OBJECT_OPEN + record.Title + OBJECT_CLOSE + DISCONNECT;
-                bool sendObj = SendMsg(client, msge);
-                if (sendObj)
+                using (HttpClient client = new HttpClient())
                 {
-                    await client.GetStream().FlushAsync();
-                    closeConversation(client);
+                    var url = $"https://api.telegram.org/bot{BotToken}/sendMessage";
+                    var content = new FormUrlEncodedContent(new[]
+                    {
+                        new KeyValuePair<string, string>("chat_id", ChatId),
+                        new KeyValuePair<string, string>("text", message)
+                    });
+
+                    var response = await client.PostAsync(url, content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        DependencyService.Get<IToast>().Show(
+                            "Success! Request has been sent to Telegram!"
+                        );
+                    }
+                    else
+                    {
+                        DependencyService.Get<IToast>().Show(
+                            "Error! Request has not been sent to Telegram!"
+                        );
+                    }
                 }
-            }
-            catch (SocketException ex)
-            {
-                closeConversation(client);
-                DependencyService.Get<IToast>().Show("SocketException: " + ex.Message);
-            }
-            catch (IOException ex)
-            {
-                closeConversation(client);
-                DependencyService.Get<IToast>().Show("IOException: " + ex.Message);
             }
             catch (Exception ex)
             {
-                closeConversation(client);
-                DependencyService.Get<IToast>().Show("Exception: " + ex.Message);
+                DependencyService.Get<IToast>().Show($"Error! {ex.Message}");
+            }
+        }
+
+        private async Task HandleNonEditMode(Record record)
+        {
+            try
+            {
+                var networkAccess = Connectivity.NetworkAccess;
+                if (networkAccess != NetworkAccess.Internet)
+                {
+                    DependencyService.Get<IToast>().Show("No internet connection");
+                    return;
+                }
+                await SendMessageToTelegram("/selection " + record.Title);
+            }
+            catch (IOException ex)
+            {
+                DependencyService.Get<IToast>().Show(
+                    "IOException: " + ex.Message
+                );
+            }
+            catch (Exception ex)
+            {
+                DependencyService.Get<IToast>().Show(
+                    "Exception: " + ex.Message
+                );
             }
         }
 
         private async void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.CurrentSelection == null)
+            if (e.CurrentSelection == null) {
                 return;
+            }
 
             Record record = e.CurrentSelection.FirstOrDefault() as Record;
             if (isEditMode)
