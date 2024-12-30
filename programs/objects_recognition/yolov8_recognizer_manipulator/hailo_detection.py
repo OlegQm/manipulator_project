@@ -1,68 +1,45 @@
-import os
-import random
-import platform
-import atexit
-from queue import Queue
-from multiprocessing import Process
-from threading import Thread
 import json
+import atexit
+import random
 
-import gi
-gi.require_version('Gst', '1.0')
-from gi.repository import Gst, GLib
+from queue import Queue
+from multiprocessing import Process, Pipe
+from threading import Thread
 import numpy as np
 import cv2
+from io import BytesIO
+import gi
+gi.require_version('Gst', '1.0')
+from gi.repository import Gst
 import hailo
 from cvzone import SerialModule
+
 from hailo_scripts.hailo_rpi_common import (
     get_caps_from_pad,
     get_numpy_from_buffer,
     app_callback_class
 )
-
 from hailo_scripts.detection_pipeline import GStreamerDetectionApp
+from server_part.server import TelegramServer
 
 class user_app_callback_class(app_callback_class):
     def __init__(self):
         super().__init__()
         self.serial = SerialModule.SerialObject("/dev/ttyUSB0", 9600, 3)
+        self.token = "7587476802:AAHhXRYyMCzqaTYdcmjjK_-aYYZ3HF4rGU4"
         self.current_angles = np.array([20, 60, 90])
         self.data_queue = Queue(maxsize=3)
         self.serial_thread = None
         self.server_process = None
-        self.words_file = "words_file.txt"
-        self.get_img_command = "<TSC>"
-        self.formed_img_name = "currentObjectsScreenshot.jpg"
-        self.command_file_folder = "screenshot_request"
-        self.current_objects_path = "currentObjects.txt"
+        self.parent_pipe = None
         self.stop_radius = 85
         self.step = 1
         self.servos_number = 3
         self.servos_limits = np.array([[0, 60], [60, 155], [0, 180]])
 
-    def file_write(self, file_name, msg):
-        with open(file_name, "w") as f:
-            f.write(msg)
-
-    def read_word(self, file_path):
-        try:
-            with open(file_path, "r") as f:
-                return f.read().strip()
-        except Exception as e:
-            print(f"File reading error: {e}")
-            return None
-
-    def check_for_img_command(self, path):
-        try:
-            old_file_path = os.path.join(path, "1")
-            new_file_path = os.path.join(path, "0")
-            if os.path.exists(old_file_path):
-                os.rename(old_file_path, new_file_path)
-                return True
-            return False
-        except Exception as ex:
-            print(f"Error: {ex}")
-            return False
+    def start_server(self, pipe):
+        server = TelegramServer(self.token, pipe)
+        server.run()
 
     def is_in(self, angle, interval):
         return interval[0] <= angle <= interval[1]
@@ -175,14 +152,6 @@ class user_app_callback_class(app_callback_class):
             2,
         )
 
-    def activate_server(self, path_to_server, platform):
-        if platform == "Windows":
-            os.system(path_to_server)
-        else:
-            os.system(
-                f"export PATH=$PATH:~/dotnet-core ; dotnet {path_to_server}"
-            )
-
     def generate_color(self, color_id):
         random.seed(int(color_id))
         color = (
@@ -191,49 +160,6 @@ class user_app_callback_class(app_callback_class):
             random.randint(0, 255)
         )
         return color
-
-    def delete_file_if_exists(self, file_path):
-        if os.path.exists(file_path):
-            try:
-                os.remove(file_path)
-                print(f"File '{file_path}' has been deleted.")
-            except Exception as e:
-                print(f"An error occurred while deleting the file: {e}")
-
-    def find_executable_path(self, base_path, system):
-        system_arch_mapping = {
-            "Linux": {
-                "x86_64": "linux-x64",
-                "armv7l": "linux-arm",
-                "aarch64": "linux-arm64",
-            },
-            "Darwin": {
-                "x86_64": "osx-x64",
-                "arm64": "osx-arm64",
-            },
-            "Windows": {
-                "x86": "win-x86",
-                "AMD64": "win-x64",
-                "arm64": "win-arm64",
-            },
-        }
-
-        architecture = platform.machine()  # "x86_64", "armv7l", "aarch64"
-
-        arch_folder = system_arch_mapping.get(system, {}).get(architecture, "")
-        if not arch_folder:
-            raise Exception(
-                f"Unsupported system or architecture: {system}, {architecture}"
-            )
-
-        executable_folder = os.path.join(
-            base_path, "server_part", system, arch_folder
-        )
-        executable_file = "manipulatorServerPart" + (
-            ".exe" if system == "Windows" else ".dll"
-        )
-
-        return os.path.join(executable_folder, executable_file)
 
     def serial_worker(self, serial, data_queue):
         while True:
@@ -249,7 +175,6 @@ class user_app_callback_class(app_callback_class):
 
         class_dict = {index: label for index, label in enumerate(json_data["labels"])}
         return class_dict
-
 
 def app_callback(pad, info, user_data: user_app_callback_class):
     if not hasattr(app_callback, "class_dict"):
@@ -287,33 +212,33 @@ def app_callback(pad, info, user_data: user_app_callback_class):
     roi = hailo.get_roi_from_buffer(buffer)
     detections = roi.get_objects_typed(hailo.HAILO_DETECTION)
 
-    entered_name = user_data.read_word(user_data.words_file).strip().lower()
-    is_command = user_data.check_for_img_command(user_data.command_file_folder)
-    available_classes = set()
-
-    if is_command:
-        frame_cpy = frame.copy()
-        for detection in detections:
-            user_data.add_one_object(
-                frame_cpy,
-                detection,
-                app_callback.colors_map,
-                app_callback.name_index_map,
-                user_data.current_angles,
-                width,
-                height,
-                image_to_send=True
-            )
-            available_classes.add(detection.get_label().lower())
-        cv2.imwrite(user_data.formed_img_name, cv2.cvtColor(frame_cpy, cv2.COLOR_RGB2BGR))
-        user_data.file_write(
-            user_data.current_objects_path,
-            "\n".join(available_classes)
-        )
+    if user_data.parent_pipe.poll():
+        command = user_data.parent_pipe.recv()
+        if command == "get_image":
+            available_classes = set()
+            frame_cpy = frame.copy()
+            for detection in detections:
+                user_data.add_one_object(
+                    frame_cpy,
+                    detection,
+                    app_callback.colors_map,
+                    app_callback.name_index_map,
+                    user_data.current_angles,
+                    width,
+                    height,
+                    image_to_send=True
+                )
+                available_classes.add(detection.get_label().lower())
+            frame_cpy = cv2.cvtColor(frame_cpy, cv2.COLOR_RGB2BGR)
+            _, img_encoded = cv2.imencode('.jpg', frame)
+            image_data = BytesIO(img_encoded.tobytes())
+            user_data.parent_pipe.send((image_data, "\n".join(available_classes)))
+        elif isinstance(command, tuple) and command[0] == "selection":
+            app_callback.entered_name = command[1]
 
     for detection in detections:
         label = detection.get_label()
-        if label == entered_name:
+        if label == app_callback.entered_name:
             user_data.add_one_object(
                 frame,
                 detection,
@@ -331,29 +256,25 @@ def app_callback(pad, info, user_data: user_app_callback_class):
 
     return Gst.PadProbeReturn.OK
 
-
 def main():
     user_data = user_app_callback_class()
     atexit.register(user_data.cleanup)
-    system = platform.system()  # "Linux", "Darwin", "Windows"
-    server_path = user_data.find_executable_path("", system)
-    user_data.server_process = Process(
-        target=user_data.activate_server,
-        args=(server_path, system)
-    )
-    user_data.server_process.start()
-    user_data.serial_thread = Thread(
-        target=user_data.serial_worker,
-        args=(user_data.serial, user_data.data_queue)
-    )
-    user_data.serial_thread.start()
+    try:
+        parent_pipe, child_pipe = Pipe()
+        user_data.server_process = Process(target=user_data.start_server, args=(child_pipe,))
+        user_data.server_process.start()
+        user_data.parent_pipe = parent_pipe
+        print("Server started.")
+        user_data.serial_thread = Thread(
+            target=user_data.serial_worker,
+            args=(user_data.serial, user_data.data_queue)
+        )
+        user_data.serial_thread.start()
 
-    user_data.file_write(user_data.words_file, "")
-    user_data.delete_file_if_exists(user_data.formed_img_name)
-
-    app = GStreamerDetectionApp(app_callback, user_data)
-    app.run()
-    user_data.cleanup()
+        app = GStreamerDetectionApp(app_callback, user_data)
+        app.run()
+    finally:
+        user_data.cleanup()
 
 if __name__ == "__main__":
     main()
