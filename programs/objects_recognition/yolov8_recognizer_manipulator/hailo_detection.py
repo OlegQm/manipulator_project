@@ -230,7 +230,7 @@ def app_callback(pad, info, user_data: user_app_callback_class):
                 )
                 available_classes.add(detection.get_label().lower())
             frame_cpy = cv2.cvtColor(frame_cpy, cv2.COLOR_RGB2BGR)
-            _, img_encoded = cv2.imencode('.jpg', frame)
+            _, img_encoded = cv2.imencode('.jpg', frame_cpy)
             image_data = BytesIO(img_encoded.tobytes())
             user_data.parent_pipe.send((image_data, "\n".join(available_classes)))
         elif isinstance(command, tuple) and command[0] == "selection":
@@ -259,22 +259,19 @@ def app_callback(pad, info, user_data: user_app_callback_class):
 def main():
     user_data = user_app_callback_class()
     atexit.register(user_data.cleanup)
-    try:
-        parent_pipe, child_pipe = Pipe()
-        user_data.server_process = Process(target=user_data.start_server, args=(child_pipe,))
-        user_data.server_process.start()
-        user_data.parent_pipe = parent_pipe
-        print("Server started.")
-        user_data.serial_thread = Thread(
-            target=user_data.serial_worker,
-            args=(user_data.serial, user_data.data_queue)
-        )
-        user_data.serial_thread.start()
+    parent_pipe, child_pipe = Pipe()
+    user_data.server_process = Process(target=user_data.start_server, args=(child_pipe,))
+    user_data.server_process.start()
+    user_data.parent_pipe = parent_pipe
+    print("Server started.")
+    user_data.serial_thread = Thread(
+        target=user_data.serial_worker,
+        args=(user_data.serial, user_data.data_queue)
+    )
+    user_data.serial_thread.start()
 
-        app = GStreamerDetectionApp(app_callback, user_data)
-        app.run()
-    finally:
-        user_data.cleanup()
+    app = GStreamerDetectionApp(app_callback, user_data)
+    app.run()
 
 if __name__ == "__main__":
     main()
