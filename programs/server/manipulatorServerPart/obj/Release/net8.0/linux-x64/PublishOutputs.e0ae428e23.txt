@@ -1,2 +1,0 @@
-F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\bin\Release\netcoreapp3.1\publish\manipulatorServerPart.pdb
-F:\Manipulator\small_manipulator\programs\server\manipulatorServerPart\bin\Release\netcoreapp3.1\publish\manipulatorServerPart
