@@ -13,6 +13,7 @@ gi.require_version('Gst', '1.0')
 from gi.repository import Gst
 import hailo
 from cvzone import SerialModule
+import os
 
 from hailo_scripts.hailo_rpi_common import (
     get_caps_from_pad,
@@ -26,7 +27,7 @@ class user_app_callback_class(app_callback_class):
     def __init__(self):
         super().__init__()
         self.serial = SerialModule.SerialObject("/dev/ttyUSB0", 9600, 3)
-        self.token = "7587476802:AAHhXRYyMCzqaTYdcmjjK_-aYYZ3HF4rGU4"
+        self.token = os.getenv("TELEGRAM_SENDER_BOT_TOKEN")
         self.current_angles = np.array([20, 60, 90])
         self.data_queue = Queue(maxsize=3)
         self.serial_thread = None
