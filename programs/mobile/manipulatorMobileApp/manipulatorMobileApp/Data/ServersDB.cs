@@ -9,9 +9,9 @@ namespace manipulatorMobileApp.Data
     public class ServersDB
     {
         readonly SQLiteAsyncConnection db;
-        public ServersDB(string connectionString)
+        public ServersDB(string name)
         {
-            db = new SQLiteAsyncConnection(connectionString);
+            db = new SQLiteAsyncConnection(name);
             db.CreateTableAsync<Server>().Wait();
         }
 
@@ -55,15 +55,6 @@ namespace manipulatorMobileApp.Data
                                   .Where(i => i.name == name)
                                   .FirstOrDefaultAsync();
             return server;
-        }
-
-        public async Task<bool> GetServerIPAvailibiltyAsync(string IP)
-        {
-            var server = await db.Table<Server>()
-                                  .Where(i => i.IPParam == IP)
-                                  .FirstOrDefaultAsync();
-
-            return server == null;
         }
 
         public Task<int> SaveServerAsync(Server server)

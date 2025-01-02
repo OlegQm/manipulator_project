@@ -55,3 +55,4 @@ F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulato
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp\obj\Debug\netstandard2.0\manipulatorMobileApp.pdb
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp\obj\Debug\netstandard2.0\ref\manipulatorMobileApp.dll
 F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp\obj\Debug\netstandard2.0\manipulatorMobileApp.sourcelink.json
+F:\Manipulator\small_manipulator\programs\mobile\manipulatorMobileApp\manipulatorMobileApp\obj\Debug\netstandard2.0\Views\ModeSelectionPage.xaml.g.cs

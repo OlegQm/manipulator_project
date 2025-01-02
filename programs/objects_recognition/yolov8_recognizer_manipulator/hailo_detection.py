@@ -1,10 +1,10 @@
 import json
 import atexit
 import random
-
 from queue import Queue
 from multiprocessing import Process, Pipe
 from threading import Thread
+
 import numpy as np
 import cv2
 from io import BytesIO

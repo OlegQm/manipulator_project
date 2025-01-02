@@ -2,24 +2,86 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="manipulatorMobileApp.MainPage"
-             BackgroundColor="Black"
-             Title="Choise">
-    <ContentPage.Content>
-        <StackLayout>
-            <StackLayout BackgroundColor="Lavender"
-                     Padding="10,10,10,10">
-                <Button Text="OBJECTS LIST"
+             BackgroundColor="Black">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Start"
+                     Order="Secondary"
+                     x:Name="startToolbar"
+                     Clicked="StartWorking_Clicked"/>
+        <ToolbarItem Text="Save"
+                     Order="Secondary"
+                     Clicked="SaveServer_Clicked"/>
+        <ToolbarItem Text="Delete All"
+                     Order="Secondary"
+                     x:Name="deleteAll"
+                     Clicked="deleteAll_Clicked"/>
+    </ContentPage.ToolbarItems>
+    <StackLayout>
+        <StackLayout BackgroundColor="Lavender"
+                         Padding="10,10,10,10">
+            <Editor Placeholder="Server name (optional)"
+                    PlaceholderColor="Gray"
+                    TextColor="Gray"
+                    x:Name="botName"
+                    MaxLength="45"/>
+            <Editor Placeholder="Bot token"
+                    PlaceholderColor="Gray"
+                    TextColor="Gray"
+                    HeightRequest="65"
+                    x:Name="token"
+                    MaxLength="256"/>
+            <Editor Placeholder="Chat ID"
+                    PlaceholderColor="Gray"
+                    TextColor="Gray"
+                    x:Name="chatID"
+                    MaxLength="20"/>
+            <Button Margin="10"
                     CornerRadius="10"
-                    x:Name="objectListBtn"
-                    Clicked="ObjectListBtn_Clicked"/>
-            </StackLayout>
-            <StackLayout BackgroundColor="Lavender"
-                     Padding="10,10,10,10">
-                <Button Text="POSSIBLE OBJECTS"
-                    CornerRadius="10"
-                    x:Name="possibleObjectsBtn"
-                    Clicked="PossibleObjectsBtn_Clicked"/>
-            </StackLayout>
+                    Clicked="SaveServer_Clicked"
+                    Text="SAVE"/>
         </StackLayout>
-    </ContentPage.Content>
+        <RefreshView x:Name="refreshLists"
+                        Refreshing="RefreshLists_Refreshing">
+            <CollectionView x:Name="collectionView"
+                                Margin="10"
+                                SelectionMode="Single"
+                                SelectionChanged="CollectionView_SelectionChanged"
+                                EmptyView="No servers to display">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical"
+                                            ItemSpacing="10"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <SwipeView BackgroundColor="Black">
+                            <SwipeView.RightItems>
+                                <SwipeItem Text="Delete"
+                                                BackgroundColor="Red"
+                                                Invoked="OnDelete"
+                                                CommandParameter="{Binding .}"/>
+                            </SwipeView.RightItems>
+                            <StackLayout>
+                                <Label Text="{Binding name}"
+                                            x:Name="NoteTextLabel"
+                                            FontSize="Medium"
+                                            TextColor="White"
+                                            HeightRequest="44"/>
+                                <Label Text="{Binding Date}"
+                                            x:Name="NoteDateLabel"
+                                            TextColor="Silver"
+                                            FontSize="Small"/>
+                            </StackLayout>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+        <StackLayout BackgroundColor="Lavender"
+                     Padding="10,10,10,10">
+            <Button x:Name="startWorking"
+                    Text="START"
+                    CornerRadius="10"
+                    Clicked="StartWorking_Clicked"/>
+        </StackLayout>
+    </StackLayout>
 </ContentPage>

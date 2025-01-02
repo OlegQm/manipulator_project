@@ -25,11 +25,13 @@ namespace manipulatorMobileApp.Views
         private string key = "default";
         private ChatClient _clientText;
 
-        private const string BotToken = "7527925090:AAH8tATQ2tyOR6kbRjJQwA64nnhT5Nanzrs";
-        private const string ChatId = "-1002422483060";
-        public NotesPage()
+        private string botToken;
+        private string chatID;
+        public NotesPage(string botToken, string chatID)
         {
             InitializeComponent();
+            this.botToken = botToken;
+            this.chatID = chatID;
         }
 
         private async Task getAPIKey()
@@ -164,10 +166,10 @@ namespace manipulatorMobileApp.Views
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    var url = $"https://api.telegram.org/bot{BotToken}/sendMessage";
+                    var url = $"https://api.telegram.org/bot{botToken}/sendMessage";
                     var content = new FormUrlEncodedContent(new[]
                     {
-                        new KeyValuePair<string, string>("chat_id", ChatId),
+                        new KeyValuePair<string, string>("chat_id", chatID),
                         new KeyValuePair<string, string>("text", message)
                     });
 

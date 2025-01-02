@@ -15,13 +15,15 @@ namespace manipulatorMobileApp.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ScreenshotPage : ContentPage
     {
-        private const string BotToken = "7527925090:AAH8tATQ2tyOR6kbRjJQwA64nnhT5Nanzrs";
-        private const string ChatId = "-1002422483060";
+        private string botToken;
+        private string chatID;
         private int lastUpdateId = 0;
 
-        public ScreenshotPage()
+        public ScreenshotPage(string botToken, string chatID)
         {
             InitializeComponent();
+            this.botToken = botToken;
+            this.chatID = chatID;
         }
 
         public class ItemModel
@@ -61,9 +63,9 @@ namespace manipulatorMobileApp.Views
                     using (HttpClient client = new HttpClient())
                     {
                         var fileUrlResponse = await client.GetStringAsync(
-                            $"https://api.telegram.org/bot{BotToken}/getFile?file_id={fileId}");
+                            $"https://api.telegram.org/bot{botToken}/getFile?file_id={fileId}");
                         var filePath = Newtonsoft.Json.Linq.JObject.Parse(fileUrlResponse)["result"]["file_path"].ToString();
-                        var fileUrl = $"https://api.telegram.org/file/bot{BotToken}/{filePath}";
+                        var fileUrl = $"https://api.telegram.org/file/bot{botToken}/{filePath}";
 
                         var imageBytes = await client.GetByteArrayAsync(fileUrl);
                         imageView.Source = ImageSource.FromStream(() => new MemoryStream(imageBytes));
@@ -83,10 +85,10 @@ namespace manipulatorMobileApp.Views
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    var url = $"https://api.telegram.org/bot{BotToken}/sendMessage";
+                    var url = $"https://api.telegram.org/bot{botToken}/sendMessage";
                     var content = new FormUrlEncodedContent(new[]
                     {
-                        new KeyValuePair<string, string>("chat_id", ChatId),
+                        new KeyValuePair<string, string>("chat_id", chatID),
                         new KeyValuePair<string, string>("text", message)
                     });
 
@@ -114,7 +116,7 @@ namespace manipulatorMobileApp.Views
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    var url = $"https://api.telegram.org/bot{BotToken}/getUpdates?offset={lastUpdateId + 1}";
+                    var url = $"https://api.telegram.org/bot{botToken}/getUpdates?offset={lastUpdateId + 1}";
                     var response = await client.GetStringAsync(url);
                     var updates = Newtonsoft.Json.Linq.JObject.Parse(response);
                     var result = updates["result"];
@@ -136,7 +138,7 @@ namespace manipulatorMobileApp.Views
         {
             using (HttpClient client = new HttpClient())
             {
-                var url = $"https://api.telegram.org/bot{BotToken}/getUpdates";
+                var url = $"https://api.telegram.org/bot{botToken}/getUpdates";
                 var response = await client.GetStringAsync(url);
                 var updates = Newtonsoft.Json.Linq.JObject.Parse(response);
                 var result = updates["result"];
