@@ -53,16 +53,16 @@ class user_app_callback_class(app_callback_class):
 
     def roll_back(self, i, new_angle, limits):
         if i != 1:
-            return 0
+            return False
         if new_angle < limits[0] and (
             self.current_angles[0] + self.step > self.servos_limits[0][1]
         ):
-            return 1
+            return True
         elif new_angle > limits[1] and (
             self.current_angles[0] - self.step < self.servos_limits[0][0]
         ):
-            return 1
-        return 0
+            return True
+        return False
 
     def update_angles(self, changes):
         for i in range(self.servos_number):
@@ -75,24 +75,24 @@ class user_app_callback_class(app_callback_class):
             if self.is_in(new_angle, limits):
                 self.current_angles[i] = new_angle
             elif new_angle < limits[0]:
-                if i == 1 and (self.current_angles[0] + self.step) <= self.servos_limits[0][1]:
+                if i == 1 and (self.current_angles[0] + self.step) < self.servos_limits[0][1]:
                     self.current_angles[0] += self.step
                 self.current_angles[i] = limits[0]
             elif new_angle > limits[1]:
-                if i == 1 and (self.current_angles[0] - self.step) >= self.servos_limits[0][0]:
+                if i == 1 and (self.current_angles[0] - self.step) > self.servos_limits[0][0]:
                     self.current_angles[0] -= self.step
                 self.current_angles[i] = limits[1]
 
-    def one_turn(self, distance_x, distance_y, following_mode=False):
+    def one_turn(self, distance_x, distance_y, line_following_mode=False):
         if (
-            not following_mode
+            not line_following_mode
             and abs(distance_x) <= self.stop_radius
             and abs(distance_y) <= self.stop_radius
         ):
             return
 
         curr_step_x, curr_step_y = self.step, self.step
-        if not following_mode:
+        if not line_following_mode:
             curr_step_x += int(0.5 * (abs(distance_x) // self.stop_radius))
             curr_step_y += int(0.5 * (abs(distance_y) // self.stop_radius))
 
@@ -106,8 +106,11 @@ class user_app_callback_class(app_callback_class):
             changes[1] -= curr_step_y
         else:
             changes[1] += curr_step_y
-
+        with open("steps.txt", "a") as file:
+            file.write(f"{self.current_angles}->")
         self.update_angles(changes)
+        with open("steps.txt", "a") as file:
+            file.write(f"{self.current_angles}\n")
         self.data_queue.put(self.current_angles)
 
     def cleanup(self):
@@ -208,13 +211,23 @@ class user_app_callback_class(app_callback_class):
         x1, y1 = starts[:, 0], starts[:, 1]
         x2, y2 = ends[:, 0], ends[:, 1]
         x, y = point
+        
+        print("X1: ", x1)
+        print("Y1: ", y1)
+        print("X2: ", x2)
+        print("Y2: ", y2)
+        print("POINT X: ", x)
+        print("POINT Y: ", y)
 
         on_line = (y - y1) * (x2 - x1) == (y2 - y1) * (x - x1)
+        print("ON LINE")
 
         within_x_bounds = (x >= np.minimum(x1, x2)) & (x <= np.maximum(x1, x2))
         within_y_bounds = (y >= np.minimum(y1, y2)) & (y <= np.maximum(y1, y2))
 
         valid_intervals = on_line & within_x_bounds & within_y_bounds
+        
+        print("VALID INTERVALS ", valid_intervals)
 
         if np.any(valid_intervals):
             return np.argmax(valid_intervals)
@@ -228,67 +241,70 @@ class user_app_callback_class(app_callback_class):
             return
         height_limits = self.servos_limits[1]
         width_limits = self.servos_limits[2]
-        width, height = width_limits[1] - width_limits[0], height_limits[1] - height_limits[0]
+        width, height = (
+            width_limits[1] - width_limits[0],
+            height_limits[1] - height_limits[0]
+        )
         height_third_part = height // 3
         width_half = width // 2
         self.route_angles = np.array(
             [
                 [
-                    [0, height_limits[0]],
-                    [width_half - 1, height_limits[0]]
+                    [height_limits[0], 0],
+                    [height_limits[0], width_half - 1]
                 ],
                 [
-                    [width_half, height_limits[0]],
-                    [width - 1, height_limits[0]]
+                    [height_limits[0], width_half],
+                    [height_limits[0], width - 1]
                 ],
                 [
-                    [width, height_limits[0]],
-                    [width, height_limits[0] + height_third_part - 1]
+                    [height_limits[0], width],
+                    [height_limits[0] + height_third_part, width]
                 ],
                 [
-                    [width, height_limits[0] + height_third_part],
-                    [width_half + 1, height_limits[0] + height_third_part]
+                    [height_limits[0] + height_third_part, width - 1],
+                    [height_limits[0] + height_third_part, width_half + 1]
                 ],
                 [
-                    [width_half, height_limits[0] + height_third_part],
-                    [width_half, height_limits[0] + 2*height_third_part - 1]
+                    [height_limits[0] + height_third_part, width_half],
+                    [height_limits[0] + 2*height_third_part, width_half]
                 ],
                 [
-                    [width_half, height_limits[0] + 2*height_third_part],
-                    [width - 1, height_limits[0] + 2*height_third_part]
+                    [height_limits[0] + 2*height_third_part, width_half + 1],
+                    [height_limits[0] + 2*height_third_part, width - 1]
                 ],
                 [
-                    [width, height_limits[0] + 2*height_third_part],
-                    [width, height_limits[1] - 1]
+                    [height_limits[0] + 2*height_third_part, width],
+                    [height_limits[1] - 1, width]
                 ],
                 [
-                    [width, height_limits[1]],
-                    [width_half + 1, height_limits[1]]
+                    [height_limits[1], width],
+                    [height_limits[1], width_half + 1]
                 ],
                 [
-                    [width_half, height_limits[1]],
-                    [1, height_limits[1]]
+                    [height_limits[1], width_half],
+                    [height_limits[1], 1]
                 ],
                 [
-                    [0, height_limits[1]],
-                    [0, height_limits[1] - height_third_part - 1]
+                    [height_limits[1], 0],
+                    [height_limits[1] - height_third_part, 0]
                 ],
                 [
-                    [0, height_limits[1] - height_third_part],
-                    [0, height_limits[1] - 2*height_third_part - 1]
+                    [height_limits[1] - height_third_part - 1, 0],
+                    [height_limits[1] - 2*height_third_part, 0]
                 ],
                 [
-                    [0, height_limits[1] - 2*height_third_part],
-                    [0, height_limits[0] - 1]
+                    [height_limits[1] - 2*height_third_part - 1, 0],
+                    [height_limits[0] + 1, 0]
                 ]
             ]
         )
 
         self.route_distances = np.array(
             [
-                [1, 0], [1, 0], [0, 1], [-1, 0],
-                [0, 1], [1, 0], [0, 1], [-1, 0],
-                [-1, 0], [0, -1], [0, -1], [0, -1]
+                [-1, 0], [-1, 0], [0, 1], [1, 0],
+                [0, 1], [-1, 0], [0, 1], [1, 0],
+                [1, 0], [0, -1], [0, -1], [0, -1]
             ]
         )
 
@@ -307,58 +323,64 @@ class user_app_callback_class(app_callback_class):
             self.current_angles[1:]
         )
         min_index = np.argmin(distances)
-        new_angles = self.route_angles[min_index // 2, 1 - min_index % 2]
-        changes = np.array(
+        new_angles = self.route_angles[min_index // 2, min_index % 2] # 1 - min_index % 2
+        changes = np.array([
             self.current_angles[0],
             new_angles[0],
             new_angles[1]
-        )
+        ])
+        print("STANDING ON ROUTE ", changes)
+        with open("steps.txt", "a") as file:
+            file.write(f"{self.current_angles}->")
         self.update_angles(changes)
+        with open("steps.txt", "a") as file:
+            file.write(f"{self.current_angles}\n")
         self.data_queue.put(self.current_angles)
 
-    def follow_route(self):
-        index = self.find_point_interval(self.current_angles[1:])
+    def follow_route(self, index):
         if index == -1:
             return
         distances = self.route_distances[index]
-        self.one_turn(distances[0], distances[1], following_mode=True)
+        print("TURNING ON DISTANCES: ", distances)
+        self.one_turn(distances[0], distances[1], line_following_mode=True)
 
     def find_object(self, img):
-        is_on_route = False
-        if not np.any(self.last_object_position < 0):
+        route_index = self.find_point_interval(self.current_angles[1:])
+        is_on_route = route_index != -1
+        if self.last_object_position[0] != -1:
+            print("self.last_object_position[0] != -1")
             if self.object_last_direction is None:
+                print("if self.object_last_direction is None")
                 screen_center_x, screen_center_y = self.get_image_center(img)
                 obj_center_x, obj_center_y = self.last_object_position.flatten()
                 x_diff, y_diff = (obj_center_x - screen_center_x,
                                 obj_center_y - screen_center_y)
                 abs_x_diff, abs_y_diff = abs(x_diff), abs(y_diff)
-                axis, direction = (
-                    (1, x_diff // abs_x_diff) if abs_x_diff >= abs_y_diff
+                x_direction, y_direction = (
+                    (x_diff // abs_x_diff, 0) if abs_x_diff >= abs_y_diff
                     else (0, y_diff // abs_y_diff)
                 )
-                x_direction, y_direction = direction, direction
-                if axis == 1:
-                    y_direction = 0
-                else:
-                    x_direction = 0
-                self.object_last_direction = np.array([x_direction, y_direction, 0])
+                self.object_last_direction = np.array([0, y_direction, x_direction])
             changes = self.object_last_direction * self.step + self.current_angles
-
+            print("CHANGES: ", changes)
             if self.check_changes_valid(changes):
                 self.one_turn(
-                    self.object_last_direction[0],
+                    self.object_last_direction[2],
                     self.object_last_direction[1],
-                    following_mode=True
+                    line_following_mode=True
                 )
                 return
-            else:
-                self.object_last_direction = None
-                self.last_object_position = np.array([-1, -1])
-                self.get_on_route()
-                is_on_route = True
+            self.object_last_direction = None
+            self.last_object_position = np.array([-1, -1])
+            self.get_on_route()
+            route_index = self.find_point_interval(self.current_angles[1:])
+            is_on_route = True
         if not is_on_route:
             self.get_on_route()
-        self.follow_route()
+            route_index = self.find_point_interval(self.current_angles[1:])
+        print("ROUTE INDEX", route_index)
+        print("ROUTE: ", self.route_angles)
+        self.follow_route(route_index)
 
 def app_callback(pad, info, user_data: user_app_callback_class):
     if not hasattr(app_callback, "class_dict"):
@@ -374,7 +396,7 @@ def app_callback(pad, info, user_data: user_app_callback_class):
         app_callback.name_index_map = {
             value: key for key, value in enumerate(app_callback.class_names)
         }
-        app_callback.entered_name = str()
+        app_callback.entered_name = ""
         app_callback.look_for_the_object = True
 
     buffer = info.get_buffer()
@@ -441,8 +463,12 @@ def app_callback(pad, info, user_data: user_app_callback_class):
                 height,
                 image_to_send=False
             )
-    if not object_found and app_callback.look_for_the_object:
-        user_data.find_object()
+    if (
+        not object_found
+        and app_callback.look_for_the_object
+        and app_callback.entered_name != ""
+    ):
+        user_data.find_object(frame)
 
     if user_data.use_frame:
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
@@ -453,6 +479,7 @@ def app_callback(pad, info, user_data: user_app_callback_class):
 def main():
     user_data = user_app_callback_class()
     user_data.generate_route()
+    print("ROUTE: ", user_data.route_angles)
     atexit.register(user_data.cleanup)
     parent_pipe, child_pipe = Pipe()
     user_data.server_process = Process(
