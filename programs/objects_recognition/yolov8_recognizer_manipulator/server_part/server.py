@@ -37,7 +37,18 @@ class TelegramServer:
         print(f"Selection command received: {object_name}")
         self.pipe.send(("selection", object_name))
 
-    async def handle_channel_post(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async def handle_switch_searching_command(self, state):
+        if state == "0":
+            print("Switching off searching mode")
+        else:
+            print("Switching on searching mode")
+        self.pipe.send(("searching", state))
+
+    async def handle_channel_post(
+            self,
+            update: Update,
+            context: ContextTypes.DEFAULT_TYPE
+    ):
         if self.saved_update_id and update.update_id <= self.saved_update_id:
             return
 
@@ -54,6 +65,11 @@ class TelegramServer:
             object_name = command_parts[1] if len(command_parts) > 1 else None
             if object_name:
                 await self.handle_selection_command(object_name)
+        elif text.startswith("/searching"):
+            command_parts = text.split(maxsplit=1)
+            switch_searching = command_parts[1] if len(command_parts) > 1 else None
+            if switch_searching:
+                await self.handle_switch_searching_command(switch_searching)
 
     def run(self):
         self.initialize_last_update_id()

@@ -16,6 +16,10 @@
                      Order="Secondary"
                      x:Name="PhotoPromptButton"
                      Clicked="PhotoPromptButton_Clicked"/>
+        <ToolbarItem Text="OFF searching"
+                     Order="Secondary"
+                     x:Name="SearchingButton"
+                     Clicked="SearchingButton_Clicked"/>
         <ToolbarItem Text="Edit mode"
                      Order="Secondary"
                      x:Name="editMode"

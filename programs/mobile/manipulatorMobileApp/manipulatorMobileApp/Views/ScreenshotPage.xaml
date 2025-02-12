@@ -3,6 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="manipulatorMobileApp.Views.ScreenshotPage"
              BackgroundColor="Gray">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="OFF searching"
+             Order="Secondary"
+             x:Name="SearchingButton"
+             Clicked="SearchingButton_Clicked"/>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <Grid>
             <Grid.RowDefinitions>

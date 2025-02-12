@@ -223,5 +223,21 @@ namespace manipulatorMobileApp.Views
                 DependencyService.Get<IToast>().Show("Exception: " + ex.Message);
             }
         }
+
+        private async void SearchingButton_Clicked(object sender, EventArgs e)
+        {
+            SearchingButton.IsEnabled = false;
+            if (SearchingButton.Text == "OFF searching")
+            {
+                await SendMessageToTelegram("/searching 0");
+                SearchingButton.Text = "ON searching";
+            }
+            else
+            {
+                await SendMessageToTelegram("/searching 1");
+                SearchingButton.Text = "OFF searching";
+            }
+            SearchingButton.IsEnabled = true;
+        }
     }
 }

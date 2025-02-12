@@ -93,24 +93,20 @@ class user_app_callback_class(app_callback_class):
 
         curr_step_x, curr_step_y = self.step, self.step
         if not line_following_mode:
-            curr_step_x += int(0.5 * (abs(distance_x) // self.stop_radius))
-            curr_step_y += int(0.5 * (abs(distance_y) // self.stop_radius))
+            curr_step_x += int(0.25 * (abs(distance_x) // self.stop_radius))
+            curr_step_y += int(0.25 * (abs(distance_y) // self.stop_radius))
 
         changes = np.array([0, 0, 0])
         if distance_x < 0:
             changes[2] += curr_step_x
-        else:
+        elif distance_x > 0:
             changes[2] -= curr_step_x
 
         if distance_y < 0:
             changes[1] -= curr_step_y
-        else:
+        elif distance_y > 0:
             changes[1] += curr_step_y
-        with open("steps.txt", "a") as file:
-            file.write(f"{self.current_angles}->")
         self.update_angles(changes)
-        with open("steps.txt", "a") as file:
-            file.write(f"{self.current_angles}\n")
         self.data_queue.put(self.current_angles)
 
     def cleanup(self):
@@ -211,23 +207,13 @@ class user_app_callback_class(app_callback_class):
         x1, y1 = starts[:, 0], starts[:, 1]
         x2, y2 = ends[:, 0], ends[:, 1]
         x, y = point
-        
-        print("X1: ", x1)
-        print("Y1: ", y1)
-        print("X2: ", x2)
-        print("Y2: ", y2)
-        print("POINT X: ", x)
-        print("POINT Y: ", y)
 
-        on_line = (y - y1) * (x2 - x1) == (y2 - y1) * (x - x1)
-        print("ON LINE")
+        on_line = np.isclose((y - y1) * (x2 - x1), (y2 - y1) * (x - x1), atol=1e-5)
 
         within_x_bounds = (x >= np.minimum(x1, x2)) & (x <= np.maximum(x1, x2))
         within_y_bounds = (y >= np.minimum(y1, y2)) & (y <= np.maximum(y1, y2))
 
         valid_intervals = on_line & within_x_bounds & within_y_bounds
-        
-        print("VALID INTERVALS ", valid_intervals)
 
         if np.any(valid_intervals):
             return np.argmax(valid_intervals)
@@ -259,18 +245,18 @@ class user_app_callback_class(app_callback_class):
                 ],
                 [
                     [height_limits[0], width],
-                    [height_limits[0] + height_third_part, width]
+                    [height_limits[0] + height_third_part - 1, width]
                 ],
                 [
-                    [height_limits[0] + height_third_part, width - 1],
+                    [height_limits[0] + height_third_part, width],
                     [height_limits[0] + height_third_part, width_half + 1]
                 ],
                 [
                     [height_limits[0] + height_third_part, width_half],
-                    [height_limits[0] + 2*height_third_part, width_half]
+                    [height_limits[0] + 2*height_third_part - 1, width_half]
                 ],
                 [
-                    [height_limits[0] + 2*height_third_part, width_half + 1],
+                    [height_limits[0] + 2*height_third_part, width_half],
                     [height_limits[0] + 2*height_third_part, width - 1]
                 ],
                 [
@@ -314,43 +300,51 @@ class user_app_callback_class(app_callback_class):
             & (angles <= self.servos_limits[:, 1])
         )
 
-    def calculate_distance(self, points_begin, point_end):
-        return np.linalg.norm(points_begin - point_end, axis=2)
+    def is_point_on_segment(self, x1, y1, x2, y2, x, y):
+        cross_product = (y - y1) * (x2 - x1) - (x - x1) * (y2 - y1)
+        if cross_product == 0:
+            return False
+
+        within_x_bounds = min(x1, x2) <= x <= max(x1, x2)
+        within_y_bounds = min(y1, y2) <= y <= max(y1, y2)
+
+        return within_x_bounds and within_y_bounds
 
     def get_on_route(self):
-        distances = self.calculate_distance(
-            self.route_angles,
-            self.current_angles[1:]
-        )
-        min_index = np.argmin(distances)
-        new_angles = self.route_angles[min_index // 2, min_index % 2] # 1 - min_index % 2
+        h1, w1 = self.route_angles[3, 0]
+        h2, w2 = self.route_angles[6, 0]
+        h, w = self.current_angles[1:]
+        new_h, new_w = self.current_angles[1:]
+
+        if self.is_point_on_segment(
+            h1, w1,
+            h2, w2,
+            h, w
+        ):
+            new_h = h1 if h <= (h1 + h2) // 2 else h2
+        else:
+            begin_w, end_w = self.servos_limits[2]
+            new_w = begin_w if w <= (begin_w + end_w) // 2 else end_w
+
         changes = np.array([
             self.current_angles[0],
-            new_angles[0],
-            new_angles[1]
+            new_h,
+            new_w
         ])
-        print("STANDING ON ROUTE ", changes)
-        with open("steps.txt", "a") as file:
-            file.write(f"{self.current_angles}->")
         self.update_angles(changes)
-        with open("steps.txt", "a") as file:
-            file.write(f"{self.current_angles}\n")
         self.data_queue.put(self.current_angles)
 
     def follow_route(self, index):
         if index == -1:
             return
         distances = self.route_distances[index]
-        print("TURNING ON DISTANCES: ", distances)
         self.one_turn(distances[0], distances[1], line_following_mode=True)
 
     def find_object(self, img):
         route_index = self.find_point_interval(self.current_angles[1:])
         is_on_route = route_index != -1
         if self.last_object_position[0] != -1:
-            print("self.last_object_position[0] != -1")
             if self.object_last_direction is None:
-                print("if self.object_last_direction is None")
                 screen_center_x, screen_center_y = self.get_image_center(img)
                 obj_center_x, obj_center_y = self.last_object_position.flatten()
                 x_diff, y_diff = (obj_center_x - screen_center_x,
@@ -360,26 +354,26 @@ class user_app_callback_class(app_callback_class):
                     (x_diff // abs_x_diff, 0) if abs_x_diff >= abs_y_diff
                     else (0, y_diff // abs_y_diff)
                 )
-                self.object_last_direction = np.array([0, y_direction, x_direction])
+                self.object_last_direction = np.array([0, y_direction, -x_direction])
             changes = self.object_last_direction * self.step + self.current_angles
-            print("CHANGES: ", changes)
             if self.check_changes_valid(changes):
                 self.one_turn(
-                    self.object_last_direction[2],
+                    -self.object_last_direction[2],
                     self.object_last_direction[1],
                     line_following_mode=True
                 )
                 return
+
             self.object_last_direction = None
             self.last_object_position = np.array([-1, -1])
-            self.get_on_route()
             route_index = self.find_point_interval(self.current_angles[1:])
+            if route_index == -1:
+                self.get_on_route()
+                route_index = self.find_point_interval(self.current_angles[1:])
             is_on_route = True
         if not is_on_route:
             self.get_on_route()
             route_index = self.find_point_interval(self.current_angles[1:])
-        print("ROUTE INDEX", route_index)
-        print("ROUTE: ", self.route_angles)
         self.follow_route(route_index)
 
 def app_callback(pad, info, user_data: user_app_callback_class):
@@ -446,8 +440,9 @@ def app_callback(pad, info, user_data: user_app_callback_class):
             )
         elif isinstance(command, tuple) and command[0] == "selection":
             app_callback.entered_name = command[1]
-            user_data.last_object_position = np.array([-1, -1])
-            user_data.object_last_direction = None
+        elif isinstance(command, tuple) and command[0] == "searching":
+            if str.isdigit(command[1].strip()):
+                app_callback.look_for_the_object = int(command[1]) == 1
 
     object_found = False
     for detection in detections:
@@ -479,7 +474,6 @@ def app_callback(pad, info, user_data: user_app_callback_class):
 def main():
     user_data = user_app_callback_class()
     user_data.generate_route()
-    print("ROUTE: ", user_data.route_angles)
     atexit.register(user_data.cleanup)
     parent_pipe, child_pipe = Pipe()
     user_data.server_process = Process(
