@@ -66,7 +66,7 @@ command (`yolov8m_640_v15/yolov8l_model_v16_640.svg` in my case).
 Now find all 6 output layers: `output_layer1`, `output_layer2`,..., `output_layer6` and look at the `conv` layers in front of each of them.
 In my case (`yolov8l_model_v16_640.svg`) these are layers `conv57`, `conv58`, `conv70`, `conv71`, `conv82` and `conv83`, keep these names.
 After that copy the file `config/postprocess_config/yolov8m_nms_config.json` to yourself and replace my names with your own,
-you can also rename the file as desired. Also specify the path to this file in `alls`:
+you can also rename the file as desired (files for YOLO nano, medium and large already added). Also specify the path to this file in `alls`:
 
 alls = '''
 quantisation_param([conv58, conv71, conv83], force_range_out=[0.0, 1.0])
