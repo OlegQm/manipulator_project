@@ -36,7 +36,7 @@ to yolov8m_640_v15/yolov8m_model_v15_640.onnx` visualization, that's my case):
 On the image you will find the last `Concat` layer, which includes the 3 arrows (`/model.22/Concat_3` on
 `yolov8m_model_v15_640.onnx` visualization).
 
-Then go up the leftmost branch of this word all the way to `Reshape'. After that you will see 2 `Conv` layers.
+Then go up the leftmost branch of this word all the way to `Reshape`. After that you will see 2 `Conv` layers.
 Click on the left one (`/model.22/cv2.0/cv2.0.2/Conv` in my case) and copy its name (`name`),
 do the same with the second one (`/model.22/cv3.0/cv3.0.2/Conv` in my case)
 and copy its name right after the first one.
