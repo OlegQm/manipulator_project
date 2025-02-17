@@ -68,11 +68,11 @@ In my case (`yolov8l_model_v16_640.svg`) these are layers `conv57`, `conv58`, `c
 After that copy the file `config/postprocess_config/yolov8m_nms_config.json` to yourself and replace my names with your own,
 you can also rename the file as desired. Also specify the path to this file in `alls`:
 
-`alls = '''`
-`quantisation_param([conv58, conv71, conv83], force_range_out=[0.0, 1.0])`
-`normalisation1 = normalization([0.0, 0.0, 0.0, 0.0], [255.0, 255.0, 255.0])`
-`nms_postprocess("config/postprocess_config/yolov8m_nms_config.json" meta_arch=yolov8, engine=cpu)`
-`'''`
+alls = '''
+quantisation_param([conv58, conv71, conv83], force_range_out=[0.0, 1.0])
+normalisation1 = normalization([0.0, 0.0, 0.0, 0.0], [255.0, 255.0, 255.0])
+nms_postprocess("config/postprocess_config/yolov8m_nms_config.json" meta_arch=yolov8, engine=cpu)
+'''
 Also in `alls` replace the names `[conv58, conv71, conv83]` with the names of the `conv` layers before `output_layer2`,
 `output_layer4` and `output_layer6`.
 
