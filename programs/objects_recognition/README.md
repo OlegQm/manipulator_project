@@ -1,16 +1,16 @@
 ### Raspberry Pi setup:
 
-bash```
+```
 sudo apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget libbz2-dev
 ```
 
 ----- Python 3.8 and pip installation ----- (if you doesn't have Python installed)
 
-bash```
+```
 wget https://www.python.org/ftp/python/3.8.8/Python-3.8.8.tgz
 ```
 
-bash```
+```
 tar -xf Python-3.8.8.tgz
 cd Python-3.8.8
 ./configure --enable-optimizations
@@ -22,14 +22,14 @@ sudo apt install python3-pip
 
 Download the program .zip-file
 
-bash```
+```
 mkdir ~/manipulator
 unzip ~/Downloads/yolov8_recognizer_manipulator.zip -d ~/manipulator
 ```
 
 ----- Libraries installation -----
 
-bash```
+```
 python3 -m venv --system-site-packages myenv
 source myenv/bin/activate
 sudo apt update
@@ -37,12 +37,13 @@ sudo apt install python3-opencv libopencv-dev
 ```
 
 Then manually execute commands below or use:
-bash```
+```
 pip install -r yolov8_recognizer_manipulator/requirements/requirements.txt
 ```
+
 OR:
 
-bash```
+```
 pip install numpy==1.24.4
 pip install pyserial==3.5
 pip install cvzone==1.6.1
@@ -53,7 +54,7 @@ pip install picamera2==0.3.18
 
 ----- Thonny installation ----- (if you want and if Raspberry Pi doesn't contain it)
 
-bash```
+```
 sudo pip install thonny
 ```
 
@@ -62,7 +63,7 @@ sudo pip install thonny
 Download your version here (.deb for Ubuntu and Debian, .rpm for Red Head and Fedora):
 https://code.visualstudio.com/ (code_1.85.1-1702462158_amd64.deb in my case)
 
-bash```
+```
 sudo dpkg -i code_1.85.1-1702462158_amd64.deb
 sudo apt-get install -f
 code
@@ -77,7 +78,7 @@ Press Ctrl+Shift+P, choose "Select Interpreter", then choose environment
 Download the version of dotnet for your system to ~/Downloads: https://dotnet.microsoft.com/download/dotnet/8.0
 (in my case Arm64 binaries (dotnet-sdk-8.0.201-linux-arm64.tar.gz))
 
-bash```
+```
 mkdir ~/dotnet-core
 tar zxf ~/Downloads/dotnet-sdk-3.1.426-linux-x64.tar.gz -C ~/dotnet-core
 export PATH=$PATH:~/dotnet-core
@@ -91,7 +92,7 @@ And then you can build and run your code
 
 ----- Code execution -----
 
-bash```
+```
 source myenv/bin/activate
 cd /home/olegqm/manipulator/yolov8_recognizer_manipulator
 python3 yolov8_recognizer_manipulator.py
@@ -100,23 +101,23 @@ python3 yolov8_recognizer_manipulator.py
 You can create desctop icon with this commands by following this istructions:
 
 1)
-bash```
+```
 nano ~/Desktop/run_commands.sh
 ```
 2) Inside this file enter:
 
-bash```
+```
 #!/bin/bash
 source myenv/bin/activate
 cd /home/olegqm/manipulator/yolov8_recognizer_manipulator
 python3 yolov8_recognizer_manipulator.py
 ```
 
-3) bash```chmod +x ~/Desktop/run_commands.sh```
-4) bash```nano ~/Desktop/run_commands.desktop```
+3) ```chmod +x ~/Desktop/run_commands.sh```
+4) ```nano ~/Desktop/run_commands.desktop```
 5) Inside this file enter:
 
-bash```
+```
 [Desktop Entry]
 Type=Application
 Name=Run Commands
@@ -127,13 +128,13 @@ Terminal=true
 
 ----- Transfering data -----
 
-bash```
+```
 scp path_from user_name@rpi_ip_address:path_to
 ```
 
 ----- Connecting with VNC -----
 
-bash```
+```
 ssh user@ip_address -> enter "yes"
 sudo raspi-config -> Interface Options -> VNC -> yes
 sudo raspi-config -> System options -> Boot / Auto login -> Desktop Autologin
@@ -142,7 +143,7 @@ Finish -> yes
 
 ----- Camera rotation -----
 
-bash```
+```
 sudo nano /boot/firmware/config.txt
 dtoverlay=ov5647,rotation=180 # ov5647 is your camera's name
 ```
