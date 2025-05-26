@@ -1,16 +1,13 @@
-### Raspberry Pi setup:
+## Raspberry Pi setup:
 
 ```
 sudo apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget libbz2-dev
 ```
 
------ Python 3.8 and pip installation ----- (if you doesn't have Python installed)
+### Python 3.8 and pip installation (if you doesn't have Python installed)
 
 ```
 wget https://www.python.org/ftp/python/3.8.8/Python-3.8.8.tgz
-```
-
-```
 tar -xf Python-3.8.8.tgz
 cd Python-3.8.8
 ./configure --enable-optimizations
@@ -18,7 +15,7 @@ sudo make altinstall
 sudo apt install python3-pip
 ```
 
------ Program -----
+### Manipulator code
 
 Download the program .zip-file
 
@@ -27,7 +24,7 @@ mkdir ~/manipulator
 unzip ~/Downloads/yolov8_recognizer_manipulator.zip -d ~/manipulator
 ```
 
------ Libraries installation -----
+### Libraries installation
 
 ```
 python3 -m venv --system-site-packages myenv
@@ -36,12 +33,12 @@ sudo apt update
 sudo apt install python3-opencv libopencv-dev
 ```
 
-Then manually execute commands below or use:
+### Then execute commands below:
 ```
 pip install -r yolov8_recognizer_manipulator/requirements/requirements.txt
 ```
 
-OR:
+### OR use:
 
 ```
 pip install numpy==1.24.4
@@ -52,13 +49,13 @@ pip install lapx==0.5.2
 pip install picamera2==0.3.18
 ```
 
------ Thonny installation ----- (if you want and if Raspberry Pi doesn't contain it)
+### Thonny installation (if you want and if Raspberry Pi doesn't contain it)
 
 ```
 sudo pip install thonny
 ```
 
------ VS Code installation ----- (if you want, you can use VS Code instead of Thonny)
+### VS Code installation (if you want, you can use VS Code instead of Thonny)
 
 Download your version here (.deb for Ubuntu and Debian, .rpm for Red Head and Fedora):
 https://code.visualstudio.com/ (code_1.85.1-1702462158_amd64.deb in my case)
@@ -73,7 +70,7 @@ Download the python package in VS Code and open the "yolov8_recognizer_manipulat
 
 Press Ctrl+Shift+P, choose "Select Interpreter", then choose environment
 
------ Dotnet installation -----
+### Dotnet installation
 
 Download the version of dotnet for your system to ~/Downloads: https://dotnet.microsoft.com/download/dotnet/8.0
 (in my case Arm64 binaries (dotnet-sdk-8.0.201-linux-arm64.tar.gz))
@@ -90,7 +87,7 @@ If the console print out the version of dotnet, everything is fine
 
 And then you can build and run your code
 
------ Code execution -----
+### Code execution
 
 ```
 source myenv/bin/activate
@@ -126,13 +123,13 @@ Exec=/home/olegqm/Desktop/run_commands.sh
 Terminal=true
 ```
 
------ Transfering data -----
+### Transfering data from Raspberry on your local device
 
 ```
 scp path_from user_name@rpi_ip_address:path_to
 ```
 
------ Connecting with VNC -----
+### Connecting with VNC
 
 ```
 ssh user@ip_address -> enter "yes"
@@ -141,7 +138,7 @@ sudo raspi-config -> System options -> Boot / Auto login -> Desktop Autologin
 Finish -> yes
 ```
 
------ Camera rotation -----
+### Camera rotation
 
 ```
 sudo nano /boot/firmware/config.txt
