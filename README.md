@@ -6,8 +6,8 @@ This is a solo project by **Oleh Savchenko**, aimed at creating a fully autonomo
 
 ## 📷 Photos
 
-![image](https://github.com/user-attachments/assets/971d7484-843c-4c15-a828-a4a6b6137559)
-![image](https://github.com/user-attachments/assets/8348fe21-4bdf-4f39-a8d4-8ce5db829f3f)
+![image](https://github.com/user-attachments/assets/40056989-6e84-4b2b-adb6-74e7e2116489)
+![image](https://github.com/user-attachments/assets/45d18611-813d-4b63-b7f0-def2c072c46d)
 
 ---
 
@@ -62,7 +62,7 @@ The Raspberry Pi serves as an energy-efficient and high-performance computer for
 * **Display**
 * **Power button**
 
-![image](https://github.com/user-attachments/assets/6c518d6d-fa6d-452e-ae65-178f1f09fc7e)
+![image](https://github.com/user-attachments/assets/609eaace-a846-4e91-b363-97ee4fb4dc34)
 
 ---
 
@@ -73,7 +73,7 @@ The project leverages the Hailo AI Kit, a specialized accelerator for object det
 * **Raspberry Pi CPU**: YOLOv8n at 256×256 resolution → \~9 FPS
 * **Hailo AI Kit**: YOLOv8m at 640×640 resolution → >100 FPS
 
-![image](https://github.com/user-attachments/assets/bf0ff6d1-4413-4dce-947a-5ee3e600a3e1)
+![image](https://github.com/user-attachments/assets/30269dce-7b4b-4198-aa8d-8022412a04c2)
 
 ---
 
