@@ -9,8 +9,8 @@ const int resolution = 8;
 const int ledOn = 32;
 const int ledOff = 0;
  
-const char* WIFI_SSID = "OnePlus 10T";
-const char* WIFI_PASS = "25Oleg25";
+const char* WIFI_SSID = "WIFI_NETWORK_NAME";
+const char* WIFI_PASS = "WIFI_NETWORK_PASSWORD";
  
 WebServer server(80);
  
