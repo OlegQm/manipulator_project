@@ -1,4 +1,3 @@
-```markdown
 # manipulatorMobileApp
 
 Welcome to **manipulatorMobileApp**, a cross-platform mobile application built with Xamarin.Forms for Android and iOS devices.
