@@ -91,7 +91,7 @@ And then you can build and run your code
 
 ```
 source myenv/bin/activate
-cd /home/olegqm/manipulator/yolov8_recognizer_manipulator
+cd ~/manipulator/yolov8_recognizer_manipulator
 python3 yolov8_recognizer_manipulator.py
 ```
 
@@ -106,7 +106,7 @@ nano ~/Desktop/run_commands.sh
 ```
 #!/bin/bash
 source myenv/bin/activate
-cd /home/olegqm/manipulator/yolov8_recognizer_manipulator
+cd ~/manipulator/yolov8_recognizer_manipulator
 python3 yolov8_recognizer_manipulator.py
 ```
 
@@ -119,7 +119,7 @@ python3 yolov8_recognizer_manipulator.py
 Type=Application
 Name=Run Commands
 Icon=utilities-terminal
-Exec=/home/olegqm/Desktop/run_commands.sh
+Exec=~/Desktop/run_commands.sh
 Terminal=true
 ```
 
