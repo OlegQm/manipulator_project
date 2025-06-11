@@ -83,7 +83,7 @@ source ~/.bashrc
 dotnet --version
 ```
 
-If the console print out the version of dotnet, everything is fine
+If the console prints the dotnet version, everything is fine
 
 And then you can build and run your code
 
@@ -91,11 +91,11 @@ And then you can build and run your code
 
 ```
 source myenv/bin/activate
-cd /home/olegqm/manipulator/yolov8_recognizer_manipulator
+cd ~/manipulator/yolov8_recognizer_manipulator
 python3 yolov8_recognizer_manipulator.py
 ```
 
-You can create desctop icon with this commands by following this istructions:
+You can create a desktop icon by following these instructions:
 
 1)
 ```
@@ -106,7 +106,7 @@ nano ~/Desktop/run_commands.sh
 ```
 #!/bin/bash
 source myenv/bin/activate
-cd /home/olegqm/manipulator/yolov8_recognizer_manipulator
+cd ~/manipulator/yolov8_recognizer_manipulator
 python3 yolov8_recognizer_manipulator.py
 ```
 
@@ -119,11 +119,11 @@ python3 yolov8_recognizer_manipulator.py
 Type=Application
 Name=Run Commands
 Icon=utilities-terminal
-Exec=/home/olegqm/Desktop/run_commands.sh
+Exec=/path/to/run_commands.sh
 Terminal=true
 ```
 
-### Transfering data from Raspberry on your local device
+### Transferring data from the Raspberry Pi to your local device
 
 ```
 scp path_from user_name@rpi_ip_address:path_to
