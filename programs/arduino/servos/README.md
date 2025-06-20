@@ -4,6 +4,7 @@ This sketch reads rotation angles and drives three servo motors on an Arduino Un
 
 ## Wiring
 
+- **Flashlight** → Data Pin 5
 - **Base servo** → Data Pin 4  
 - **Left servo** (camera facing you) → Data Pin 3  
 - **Right servo** → Data Pin 2  
