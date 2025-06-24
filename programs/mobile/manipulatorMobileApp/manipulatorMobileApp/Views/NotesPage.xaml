@@ -20,6 +20,10 @@
                      Order="Secondary"
                      x:Name="SearchingButton"
                      Clicked="SearchingButton_Clicked"/>
+        <ToolbarItem Text="Turn on flashlight"
+                     Order="Secondary"
+                     x:Name="FlashlightButton"
+                     Clicked="FlashlightButton_Clicked"/>
         <ToolbarItem Text="Edit mode"
                      Order="Secondary"
                      x:Name="editMode"

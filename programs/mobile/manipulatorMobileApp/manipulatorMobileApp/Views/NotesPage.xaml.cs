@@ -535,5 +535,21 @@ namespace manipulatorMobileApp.Views
             }
             SearchingButton.IsEnabled = true;
         }
+
+        private async void FlashlightButton_Clicked(object sender, EventArgs e)
+        {
+            FlashlightButton.IsEnabled = false;
+            if (FlashlightButton.Text == "Turn on flashlight")
+            {
+                await SendMessageToTelegram("/flashlight ON");
+                FlashlightButton.Text = "Turn off flashlight";
+            }
+            else
+            {
+                await SendMessageToTelegram("/flashlight OFF");
+                FlashlightButton.Text = "Turn on flashlight";
+            }
+            FlashlightButton.IsEnabled = true;
+        }
     }
 }
