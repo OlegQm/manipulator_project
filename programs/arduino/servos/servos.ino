@@ -6,6 +6,8 @@ Servo servo1;
 Servo servo2;
 Servo servo3;
 
+const int flashlightPin = 5;
+
 int const STEP = 1;
 int angles[] = {20, 60, 90};
 int stringLength = numOfValsRec * digitsPerValRec + 1;
@@ -22,28 +24,30 @@ void setup() {
   servo1.write(angles[0]);
   servo2.write(angles[1]);
   servo3.write(angles[2]);
+
+  pinMode(flashlightPin, OUTPUT);
+  digitalWrite(flashlightPin, LOW);
 }
 
 void reciveData() {
+  static String input = "";
   while (Serial.available()) {
     char c = Serial.read();
-    if (c == '$') {
-      counterStart = true;
-    }
-    if (counterStart) {
-      if (counter < stringLength) {
-        recievedString = String(recievedString + c);
-        counter++;
+    input += c;
+    if (input.endsWith("@ON")) {
+      digitalWrite(flashlightPin, HIGH);
+      input = "";
+    } else if (input.endsWith("@OFF")) {
+      digitalWrite(flashlightPin, LOW);
+      input = "";
+    } 
+    else if (input.startsWith("$") && input.length() == stringLength) {
+      for (int i = 0; i < 3; ++i) {
+        angles[i] = input.substring(1 + i * 3, 1 + (i + 1) * 3).toInt();
       }
-      if (counter >= stringLength) {
-        for (int i = 0; i < 3; ++i) {
-          angles[i] = recievedString.substring(1 + i * 3, 1 + (i + 1) * 3).toInt();
-        }
-        recievedString = "";
-        counter = 0;
-        counterStart = false;
-      }
+      input = "";
     }
+    if (input.length() > 20) input = input.substring(input.length() - 20);
   }
 }
 
