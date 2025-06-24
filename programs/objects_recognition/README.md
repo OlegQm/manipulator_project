@@ -70,7 +70,7 @@ Download the python package in VS Code and open the "yolov8_recognizer_manipulat
 
 Press Ctrl+Shift+P, choose "Select Interpreter", then choose environment
 
-### Dotnet installation
+### Dotnet installation (only if you are using TCP/IP communication, not via the Telegram)
 
 Download the version of dotnet for your system to ~/Downloads: https://dotnet.microsoft.com/download/dotnet/8.0
 (in my case Arm64 binaries (dotnet-sdk-8.0.201-linux-arm64.tar.gz))
@@ -107,7 +107,7 @@ nano ~/Desktop/run_commands.sh
 #!/bin/bash
 source myenv/bin/activate
 cd ~/manipulator/yolov8_recognizer_manipulator
-python3 yolov8_recognizer_manipulator.py
+python3 hailo_remote_detection.py
 ```
 
 3) ```chmod +x ~/Desktop/run_commands.sh```
