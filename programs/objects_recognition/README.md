@@ -92,7 +92,7 @@ And then you can build and run your code
 ```
 source myenv/bin/activate
 cd ~/manipulator/yolov8_recognizer_manipulator
-python3 yolov8_recognizer_manipulator.py
+python3 hailo_remote_detection.py
 ```
 
 You can create a desktop icon by following these instructions:
