@@ -4,10 +4,11 @@ This sketch reads rotation angles and drives three servo motors on an Arduino Un
 
 ## Wiring
 
+- **Flashlight** → Data Pin 5
 - **Base servo** → Data Pin 4  
 - **Left servo** (camera facing you) → Data Pin 3  
 - **Right servo** → Data Pin 2  
-- **All servos** → +5 V (use common ground with Arduino)
+- **All servos and flashlight** → +5 V (use common ground with Arduino)
 
 ## Installation
 
@@ -19,3 +20,4 @@ This sketch reads rotation angles and drives three servo motors on an Arduino Un
 
 1. Send angle data over Serial (e.g. `$090090060` (`$090` - 90 deg, `$090` - 90 deg, `$060` - 60 deg)).
 2. The sketch parses each value and moves the corresponding servo.
+3. Send `@ON` to turn the flashlight on and `@OFF` to turn it off.
