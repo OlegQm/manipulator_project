@@ -43,11 +43,24 @@ class TelegramServer:
         else:
             print("Switching on searching mode")
         self.pipe.send(("searching", state))
+        
+    async def handle_switch_flashlight_mode(self, mode):
+        mode = mode.strip()
+        if mode not in ["ON", "OFF"]:
+            print("Unknown flashlight mode")
+        print(f"Switching {mode.lower()} flashlight")
+        self.pipe.send(("flashlight", mode))
+
+    async def process_text_command(self, text, handler):
+        command_parts = text.split(maxsplit=1)
+        argument = command_parts[1] if len(command_parts) > 1 else None
+        if argument:
+            await handler(argument)
 
     async def handle_channel_post(
-            self,
-            update: Update,
-            context: ContextTypes.DEFAULT_TYPE
+        self,
+        update: Update,
+        context: ContextTypes.DEFAULT_TYPE
     ):
         if self.saved_update_id and update.update_id <= self.saved_update_id:
             return
@@ -61,17 +74,22 @@ class TelegramServer:
         if text.startswith("/get_image"):
             await self.handle_get_image_command(chat_id, context)
         elif text.startswith("/selection"):
-            command_parts = text.split(maxsplit=1)
-            object_name = command_parts[1] if len(command_parts) > 1 else None
-            if object_name:
-                await self.handle_selection_command(object_name)
+            await self.process_text_command(
+                text,
+                self.handle_selection_command
+            )
         elif text.startswith("/searching"):
-            command_parts = text.split(maxsplit=1)
-            switch_searching = command_parts[1] if len(command_parts) > 1 else None
-            if switch_searching:
-                await self.handle_switch_searching_command(switch_searching)
-
+            await self.process_text_command(
+                text,
+                self.handle_switch_searching_command
+            )
+        elif text.startswith("/flashlight"):
+            await self.process_text_command(
+                text,
+                self.handle_switch_flashlight_mode
+            )
     def run(self):
         self.initialize_last_update_id()
         print("Starting server...")
         self.app.run_polling()
+

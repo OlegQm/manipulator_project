@@ -187,7 +187,12 @@ class user_app_callback_class(app_callback_class):
             data = data_queue.get()
             if data is None:
                 break
-            serial.sendData(data)
+            if isinstance(data, np.ndarray):
+                serial.sendData(data)
+            elif isinstance(data, str):
+                serial.ser.write(b'@' + data.encode())
+            else:
+                print(f"Unknown data for serial: {data}")
             data_queue.task_done()
 
     def get_json_data(self, path_to_json):
@@ -443,6 +448,8 @@ def app_callback(pad, info, user_data: user_app_callback_class):
         elif isinstance(command, tuple) and command[0] == "searching":
             if str.isdigit(command[1].strip()):
                 app_callback.look_for_the_object = int(command[1]) == 1
+        elif isinstance(command, tuple) and command[0] == "flashlight":
+            user_data.data_queue.put("@" + command[1])
 
     object_found = False
     for detection in detections:
@@ -494,3 +501,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
