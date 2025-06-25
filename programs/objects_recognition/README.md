@@ -20,8 +20,8 @@ sudo apt install python3-pip
 Download the program .zip-file
 
 ```
-mkdir ~/manipulator
-unzip ~/Downloads/yolov8_recognizer_manipulator.zip -d ~/manipulator
+mkdir path/to/manipulator
+unzip ~/Downloads/yolov8_recognizer_manipulator.zip -d path/to/manipulator
 ```
 
 ### Libraries installation
@@ -70,15 +70,15 @@ Download the python package in VS Code and open the "yolov8_recognizer_manipulat
 
 Press Ctrl+Shift+P, choose "Select Interpreter", then choose environment
 
-### Dotnet installation (only if you are using TCP/IP communication, not via the Telegram)
+### (DEPRECATED) Dotnet installation (only if you are using TCP/IP communication, not via the Telegram)
 
 Download the version of dotnet for your system to ~/Downloads: https://dotnet.microsoft.com/download/dotnet/8.0
 (in my case Arm64 binaries (dotnet-sdk-8.0.201-linux-arm64.tar.gz))
 
 ```
-mkdir ~/dotnet-core
-tar zxf ~/Downloads/dotnet-sdk-3.1.426-linux-x64.tar.gz -C ~/dotnet-core
-export PATH=$PATH:~/dotnet-core
+mkdir path/to/dotnet-core
+tar zxf ~/Downloads/dotnet-sdk-3.1.426-linux-x64.tar.gz -C path/to/dotnet-core
+export PATH=$PATH:path/to/dotnet-core
 source ~/.bashrc
 dotnet --version
 ```
@@ -91,7 +91,7 @@ And then you can build and run your code
 
 ```
 source myenv/bin/activate
-cd ~/manipulator/yolov8_recognizer_manipulator
+cd path/to/manipulator/yolov8_recognizer_manipulator
 python3 hailo_remote_detection.py
 ```
 
@@ -99,27 +99,30 @@ You can create a desktop icon by following these instructions:
 
 1)
 ```
-nano ~/Desktop/run_commands.sh
+nano path/to/run_remote.sh
 ```
 2) Inside this file enter:
 
 ```
 #!/bin/bash
-source myenv/bin/activate
-cd ~/manipulator/yolov8_recognizer_manipulator
-python3 hailo_remote_detection.py
+cd ~/path/to/hailo_scripts
+source venv_hailo/bin/activate
+source setup_env.sh
+cd ..
+export TELEGRAM_SENDER_BOT_TOKEN="your_token"
+python hailo_remote_detection.py -i rpi -u --hef hailo_scripts/yolov8m_model_v15_640.hef --labels-json hailo_scripts/labels.json
 ```
 
-3) ```chmod +x ~/Desktop/run_commands.sh```
-4) ```nano ~/Desktop/run_commands.desktop```
+3) ```chmod +x path/to/run_commands.sh```
+4) ```nano path/to/run_commands.desktop```
 5) Inside this file enter:
 
 ```
 [Desktop Entry]
 Type=Application
-Name=Run Commands
+Name=Run Remote
 Icon=utilities-terminal
-Exec=/path/to/run_commands.sh
+Exec=/path/to/run_remote.sh
 Terminal=true
 ```
 
