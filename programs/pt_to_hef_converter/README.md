@@ -1,11 +1,11 @@
 # YOLO and HAILO Setup Guide
 
-## 1) Create environment (YOLO) with Python 3.8.20
+## 1) Create environment (YOLO) with Python 3.10.18
 
 Create a virtual environment (`venv_yolov8` in my case):
 
 ```sh
-python3.8 -m venv venv_yolov8
+python3.10 -m venv venv_yolov8
 ```
 
 Activate the environment:
@@ -34,9 +34,25 @@ yolo export model=./yolov8m_model_v15_640.pt imgsz=640 format=onnx opset=11
 
 ---
 
-## 2) Parse the model
+## 2) Create environment (HAILO) with Python 3.10.18
 
-Move to `steps/parse.py`
+Create a virtual environment (`venv_hailo` in my case):
+
+```sh
+python3.10 -m venv venv_hailo
+```
+
+Activate the environment:
+
+```sh
+source venv_hailo/bin/activate
+```
+
+Now install the required modules:
+
+```sh
+pip install -r hailo_env_requirements.txt
+```
 
 Then enter your model name instead of `yolov8m_model_v15_640`, `yolov8m_model_v15_640.onnx`,  
 and `yolov8m_model_v15_640.har` in `steps/parse.py`.  
@@ -76,7 +92,7 @@ Copy this list and replace it in `steps/parse.py`.
 Now execute the following command in the terminal:
 
 ```sh
-python3.8 steps/parse.py
+python3.10 steps/parse.py
 ```
 
 ---
@@ -131,7 +147,7 @@ with the names of the `conv` layers before `output_layer2`, `output_layer4`, and
 Now execute the following command:
 
 ```sh
-python3.8 steps/optimize.py
+python3.10 steps/optimize.py
 ```
 
 ---
@@ -143,7 +159,7 @@ Open `steps/compile.py` and replace `model_name` with your model name.
 Then execute:
 
 ```sh
-python3.8 steps/compile.py
+python3.10 steps/compile.py
 ```
 
 After this command, your `.hef` file will be generated.  
