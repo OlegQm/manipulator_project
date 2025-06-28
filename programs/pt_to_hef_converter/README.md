@@ -1,6 +1,6 @@
-# YOLO and HAILO Setup Guide
+# YOLO and HAILO Setup Guide (On Ubuntu 24.04, officially not supported)
 
-## 1) Create environment (YOLO) with Python 3.10.18
+## 1) Create environment (YOLO) with Python 3.10.18 (you may need to install it)
 
 Create a virtual environment (`venv_yolov8` in my case):
 
@@ -39,7 +39,18 @@ yolo export model=./yolov8m_model_v15_640.pt imgsz=640 format=onnx opset=11
 Create a virtual environment (`venv_hailo` in my case):
 
 ```sh
+deactivate
 python3.10 -m venv venv_hailo
+```
+
+Install system dependencies (Ubuntu):
+
+```sh
+sudo apt update
+sudo apt install -y \
+    python3.10-dev python3.10-distutils \
+    build-essential cython3 pkg-config \
+    graphviz libgraphviz-dev
 ```
 
 Activate the environment:
@@ -51,6 +62,14 @@ source venv_hailo/bin/activate
 Now install the required modules:
 
 ```sh
+python -m pip install -U pip wheel "setuptools<60"
+python -m pip install numpy==1.23.5 cython==0.29.36
+python -m pip install --no-binary :all: --no-build-isolation lap==0.4.0
+
+python -m pip install --no-deps \
+    hailo_dataflow_compiler-3.27.0-py3-none-linux_x86_64.whl \
+    hailo_model_zoo-2.11.0-py3-none-any.whl
+
 pip install -r hailo_env_requirements.txt
 ```
 
