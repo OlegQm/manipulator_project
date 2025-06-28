@@ -34,25 +34,9 @@ yolo export model=./yolov8m_model_v15_640.pt imgsz=640 format=onnx opset=11
 
 ---
 
-## 2) Create environment (HAILO) with Python 3.8.20
+## 2) Parse the model
 
-Create a virtual environment (`venv_hailo` in my case):
-
-```sh
-python3.8 -m venv venv_hailo
-```
-
-Activate the environment:
-
-```sh
-source venv_hailo/bin/activate
-```
-
-Now install the required modules:
-
-```sh
-pip install -r hailo_env_requirements.txt
-```
+Move to `steps/parse.py`
 
 Then enter your model name instead of `yolov8m_model_v15_640`, `yolov8m_model_v15_640.onnx`,  
 and `yolov8m_model_v15_640.har` in `steps/parse.py`.  
