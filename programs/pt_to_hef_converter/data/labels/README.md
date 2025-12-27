@@ -1,1 +1,0 @@
-Labels from your dataset (in my case 3664 validation labels), corresponding to images

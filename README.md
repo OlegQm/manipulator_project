@@ -22,8 +22,10 @@ This is a solo project by **Oleh Savchenko**, aimed at creating a fully autonomo
 │   │   └── old/esp32                  # Deprecated ESP32 camera code
 │   ├── mobile
 │   │   └── manipulatorMobileApp       # Mobile app source code
-│   ├── objects_recognition            # Object detection setup on Raspberry Pi
-│   └── pt_to_hef_converter            # Convert trained models to HEF format
+│   └── objects_detection    
+│       ├── pt_to_hef_converter        # Convert trained models to HEF format
+│       ├── robotic_arm_scripts        # Scripts with robotic arm logic
+│       └── custom_model               # Own object detection model architecture and layers
 └── README.md
 ```
 

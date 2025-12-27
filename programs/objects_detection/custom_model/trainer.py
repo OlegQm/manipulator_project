@@ -1,0 +1,73 @@
+from ultralytics import YOLO
+
+model_cfg = "own_yolov8m_lca_light_v2.yaml"
+data_cfg = "<path_to>/manipulator_project/programs/pt_to_hef_converter/manipulator_project_datasets/data.yaml"
+
+device = 0
+
+FAST_DEBUG = False
+RESUME = True
+
+train_args = dict(
+    imgsz=640,
+    epochs=300,
+    batch=12,
+    workers=8,
+    device=device,
+
+    optimizer="AdamW",
+    lr0=0.002,
+    cos_lr=True,
+    lrf=0.05,
+
+    weight_decay=5e-3,
+
+    box=7.5,
+    cls=0.5,
+    dfl=1.5,
+
+    mosaic=1.0,
+    close_mosaic=10,
+    mixup=0.05,
+    hsv_h=0.015,
+    hsv_s=0.7,
+    hsv_v=0.4,
+    flipud=0.0,
+    fliplr=0.5,
+    scale=0.3,
+    degrees=0.0,
+    translate=0.1,
+
+    patience=30,
+    save_period=10,
+    seed=0,
+    amp=True,
+    project='runs/train',
+    name='custom_yolo_experiment',
+    save=True,
+    plots=True,
+    val=True,
+)
+
+if FAST_DEBUG:
+    train_args.update(
+        imgsz=8,
+        epochs=1,
+        batch=512,
+        workers=8,
+        val=False,
+        plots=False,
+        save_period=-1,
+        mosaic=0.0,
+        mixup=0.0,
+        scale=0.1,
+        translate=0.0,
+    )
+
+if __name__ == "__main__":
+    if not RESUME:
+        model = YOLO(model_cfg)
+        model.train(data=data_cfg, **train_args)
+    else:
+        model = YOLO(f'runs/train/custom_yolo_experiment/weights/best.pt')
+        model.train(data=data_cfg, resume=True, **train_args)

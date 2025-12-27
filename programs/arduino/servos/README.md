@@ -5,15 +5,15 @@ This sketch reads rotation angles and drives three servo motors on an Arduino Un
 ## Wiring
 
 - **Flashlight** → Data Pin 5
-- **Base servo** → Data Pin 4  
-- **Left servo** (camera facing you) → Data Pin 3  
-- **Right servo** → Data Pin 2  
+- **Base servo** → Data Pin 4
+- **Left servo** (camera facing you) → Data Pin 3
+- **Right servo** → Data Pin 2 
 - **All servos and flashlight** → +5 V (use common ground with Arduino)
 
 ## Installation
 
-1. Open the `.ino` file in the Arduino IDE.  
-2. Select **Arduino Uno** as the board.  
+1. Open the `.ino` file in the Arduino IDE. 
+2. Select **Arduino Uno** as the board. 
 3. Upload at 115200 bps.
 
 ## Usage

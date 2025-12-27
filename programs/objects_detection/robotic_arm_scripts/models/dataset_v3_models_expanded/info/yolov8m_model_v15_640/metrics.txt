@@ -1,0 +1,4 @@
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      75/75      27.5G      0.511     0.2557       1.01         29        640: 100%|██████████| 484/484 [03:14<00:00,  2.48it/s]
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100%|██████████| 29/29 [00:16<00:00,  1.81it/s]
+                   all       3664       6307      0.937      0.908      0.947      0.772

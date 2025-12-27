@@ -1,0 +1,4 @@
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+    241/300      5.59G     0.6777     0.5581      1.221         13        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all       3664       6307      0.931       0.89      0.935       0.75

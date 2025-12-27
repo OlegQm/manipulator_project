@@ -1,1 +1,0 @@
-500-1000 images from your real dataset (containing all classes from it)

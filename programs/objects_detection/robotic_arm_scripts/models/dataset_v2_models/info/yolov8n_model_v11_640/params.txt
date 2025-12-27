@@ -1,0 +1,27 @@
+    model = YOLO("yolov8n.pt")
+    results = model.train(
+        data="/content/dataset_yolov8/dataset_yolo/data.yaml",
+        epochs=100,
+        imgsz=640,
+        patience=6,
+        lr0=0.0012,
+        lrf=0.0001,
+        batch=24,
+        device=device,
+        workers=8,
+        optimizer='AdamW',
+        weight_decay=0.0004,
+        warmup_epochs=3.0,
+        warmup_bias_lr=0.05,
+        box=0.05,
+        cls=0.45,
+        dfl=1.2,
+        mosaic=0.8,
+        mixup=0.11,
+        hsv_h=0.015,
+        hsv_s=0.6,
+        hsv_v=0.35,
+        flipud=0.13,
+        fliplr=0.4,
+        dropout=0.18
+    )
