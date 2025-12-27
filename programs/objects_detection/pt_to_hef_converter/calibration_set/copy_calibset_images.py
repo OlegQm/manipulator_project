@@ -1,4 +1,6 @@
-import os, math, shutil
+import os
+import math
+import shutil
 
 src = '<your_dataset_path>/images/train'
 dst = '<path_to>/manipulator_project/programs/pt_to_hef_converter/calibration_set'
@@ -50,4 +52,3 @@ for f in selection:
     shutil.copy(os.path.join(src, f), os.path.join(dst, f))
 
 print(f'Copied {len(selection)} images to {dst}')
-

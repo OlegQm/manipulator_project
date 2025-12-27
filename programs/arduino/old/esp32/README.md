@@ -1,16 +1,20 @@
+# Background
+
+Previously the device used an ESP32 CAM, which is a standalone module that sends images over HTTP to localhost (wireless). This camera is programmed via Arduino, so I wrote a small script for it — `manipulator_project/programs/arduino/old/esp32/esp32.ino`.
+
 # ESP32-CAM Video Streamer
 
 This sketch boots an ESP32-Wrover module with camera, connects to Wi-Fi, and streams JPEG frames over HTTP.
 
 ## Wiring
 
-- **5 V** → VIN (or 5 V) pin on ESP32 module  
-- **GND** → GND pin on ESP32 module  
-- **LED (flash)** → GPIO 4 (configured as PWM output)  
+- **5 V** -> VIN (or 5 V) pin on ESP32 module  
+- **GND** -> GND pin on ESP32 module  
+- **LED (flash)** -> GPIO 4 (configured as PWM output)  
 - **Camera** → Built-in camera header (uses Ai-Thinker pin mapping)  
 - **Common ground** between camera module and ESP32
 
-> **Note:** No other external connections are required—power on the board and camera initialization happens in code.
+> **Note:** No other external connections are required - power on the board and camera initialization happens in code.
 
 ## Configuration
 

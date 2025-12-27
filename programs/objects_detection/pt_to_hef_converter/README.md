@@ -75,8 +75,7 @@ python -m pip install --no-deps \
 pip install -r hailo_env_requirements.txt
 ```
 
-Then enter your model name instead of `own_yolov8m_lca_light_v2`, `own_yolov8m_lca_light_v2.onnx`,
-and `own_yolov8m_lca_light_v2.har` in `steps/parse.py`.
+Then enter your model name instead of `own_yolov8m_lca_light_v2`, `own_yolov8m_lca_light_v2.onnx` and `own_yolov8m_lca_light_v2.har` in `steps/parse.py`.
 `local_attenttion_yolov8m` is the folder where `own_yolov8m_lca_light_v2.onnx` and `own_yolov8m_lca_light_v2.har` will be saved:
 
 ```python
@@ -170,9 +169,7 @@ python3.10 steps/optimize.py
 After optimization, you can test the resulting model with:
 
 ```python
-alls = '''
 python3 test_har_emulator.py
-'''
 ```
 
 ---

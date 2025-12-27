@@ -1,7 +1,7 @@
 Custom Ultralytics YOLO Extensions
 ==================================
 
-This repository packages a customized Ultralytics 8.3.160 build with additional layers for better small-object detection. The key addition is Local Context Attention (LCA), wired into Ultralytics' registry so it can be used directly in model YAMLs. A reference model (`own_yolov8m_lca_light_v2.yaml`) shows how to integrate the new blocks.
+This repository packages a customized [Ultralytics 8.3.160](https://community.ultralytics.com/t/new-release-ultralytics-v8-3-160/1185) build with additional layers for better small-object detection. The key addition is Local Context Attention (LCA), wired into Ultralytics' registry so it can be used directly in model YAMLs. A reference model (`own_yolov8m_lca_light_v2.yaml`) shows how to integrate the new blocks.
 
 Contents
 --------

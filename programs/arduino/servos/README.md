@@ -1,3 +1,11 @@
+# Background
+
+The device is controlled by three servos via Arduino:
+The left and right servos are used to adjust the camera height.
+The bottom servo (in the base) rotates the device.
+
+I could have done without Arduino, but I added it as an extra layer against high-voltage events and incorrect wiring.
+
 # Arduino Servo Controller
 
 This sketch reads rotation angles and drives three servo motors on an Arduino Uno.

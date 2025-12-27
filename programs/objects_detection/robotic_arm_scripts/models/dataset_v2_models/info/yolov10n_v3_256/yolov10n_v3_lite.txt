@@ -1,11 +1,11 @@
     model = YOLO("yolov10n.pt")
     results = model.train(
         data="datas/ready/data.yaml",
-        epochs=47,  # Уменьшено количество эпох
-        imgsz=256,  # Уменьшен размер изображений
+        epochs=47,
+        imgsz=256,
         patience=5,
         lr0=0.001,
-        lrf=0.0001,  # Увеличена конечная скорость обучения
+        lrf=0.0001,
         batch=4,
         device=device,
         workers=2,
@@ -16,12 +16,12 @@
         box=0.05,
         cls=0.5,
         dfl=1.5,
-        mosaic=0.9,  # Уменьшено значение мозаики
-        mixup=0.1,  # Сохранение mixup на низком уровне для улучшения генерализации
+        mosaic=0.9,
+        mixup=0.1,
         hsv_h=0.015,
         hsv_s=0.7,
         hsv_v=0.4,
-        flipud=0.5,  # Уменьшено значение вертикального переворота
+        flipud=0.5,
         fliplr=0.5,
-        dropout=0.2  # Уменьшено значение dropout
+        dropout=0.2
     )

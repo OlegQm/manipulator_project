@@ -21,7 +21,7 @@ Download the program .zip-file
 
 ```
 mkdir path/to/manipulator
-unzip ~/Downloads/yolov8_recognizer_manipulator.zip -d path/to/manipulator
+unzip path/to/robotic_arm_scripts.zip -d path/to/manipulator
 ```
 
 ### Libraries installation
@@ -35,7 +35,7 @@ sudo apt install python3-opencv libopencv-dev
 
 ### Then execute commands below:
 ```
-pip install -r yolov8_recognizer_manipulator/requirements/requirements.txt
+pip install -r robotic_arm_scripts/hailo_scripts/requirements.txt
 ```
 
 ### OR use:
@@ -66,13 +66,13 @@ sudo apt-get install -f
 code
 ```
 
-Download the python package in VS Code and open the "yolov8_recognizer_manipulator" folder in it
+Download the python package in VS Code and open the "robotic_arm_scripts" folder in it
 
 Press Ctrl+Shift+P, choose "Select Interpreter", then choose environment
 
-### (DEPRECATED) Dotnet installation (only if you are using TCP/IP communication, not via the Telegram)
+### (DEPRECATED) Dotnet installation (only if you are using TCP/IP communication, not through the Telegram)
 
-Download the version of dotnet for your system to ~/Downloads: https://dotnet.microsoft.com/download/dotnet/8.0
+Download the version of dotnet for your system to ~/Downloads (for example): https://dotnet.microsoft.com/download/dotnet/8.0
 (in my case Arm64 binaries (dotnet-sdk-8.0.201-linux-arm64.tar.gz))
 
 ```
@@ -91,7 +91,7 @@ And then you can build and run your code
 
 ```
 source myenv/bin/activate
-cd path/to/manipulator/yolov8_recognizer_manipulator
+cd path/to/robotic_arm_scripts
 python3 hailo_remote_detection.py
 ```
 
@@ -110,7 +110,7 @@ source venv_hailo/bin/activate
 source setup_env.sh
 cd ..
 export TELEGRAM_SENDER_BOT_TOKEN="your_token"
-python hailo_remote_detection.py -i rpi -u --hef hailo_scripts/yolov8m_model_v15_640.hef --labels-json hailo_scripts/labels.json
+python hailo_remote_detection.py -i rpi -u --hef models/dataset_v5_models/hailo_models/own_yolov8m_lca_light_v2_quantized_model.hef --labels-json hailo_scripts/labels.json
 ```
 
 3) ```chmod +x path/to/run_commands.sh```
