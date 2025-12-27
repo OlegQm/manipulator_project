@@ -18,7 +18,7 @@ Start the detection pipeline with the provided model:
 
 ```bash
 python3 hailo_remote_detection.py -i rpi -u \
-    --hef models/dataset_v3_models/hailo_models/yolov8m_model_v14_640.hef \
+    --hef models/dataset_v3_models/hailo_models/own_yolov8m_lca_light_v2_quantized_model.hef \
     --labels-json hailo_scripts/labels.json
 ```
 
