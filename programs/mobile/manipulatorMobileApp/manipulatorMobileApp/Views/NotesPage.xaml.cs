@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using manipulatorMobileApp.Helpers;
+using manipulatorMobileApp.Services;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using OpenAI.Chat;
@@ -160,40 +162,6 @@ namespace manipulatorMobileApp.Views
             notesSearchBar.Text = null;
         }
 
-        private async Task SendMessageToTelegram(string message)
-        {
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    var url = $"https://api.telegram.org/bot{botToken}/sendMessage";
-                    var content = new FormUrlEncodedContent(new[]
-                    {
-                        new KeyValuePair<string, string>("chat_id", chatID),
-                        new KeyValuePair<string, string>("text", message)
-                    });
-
-                    var response = await client.PostAsync(url, content);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        DependencyService.Get<IToast>().Show(
-                            "Success! Request has been sent to Telegram!"
-                        );
-                    }
-                    else
-                    {
-                        DependencyService.Get<IToast>().Show(
-                            "Error! Request has not been sent to Telegram!"
-                        );
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                DependencyService.Get<IToast>().Show($"Error! {ex.Message}");
-            }
-        }
-
         private async Task HandleNonEditMode(Record record)
         {
             try
@@ -204,7 +172,11 @@ namespace manipulatorMobileApp.Views
                     DependencyService.Get<IToast>().Show("No internet connection");
                     return;
                 }
-                await SendMessageToTelegram("/selection " + record.Title);
+                await TelegramService.SendMessageAsync(
+                    botToken,
+                    chatID,
+                    "/selection " + record.Title
+                );
             }
             catch (IOException ex)
             {
@@ -523,33 +495,12 @@ namespace manipulatorMobileApp.Views
 
         private async void SearchingButton_Clicked(object sender, EventArgs e)
         {
-            SearchingButton.IsEnabled = false;
-            if (SearchingButton.Text == "OFF searching")
-            {
-                await SendMessageToTelegram("/searching 0");
-                SearchingButton.Text = "ON searching";
-            } else
-            {
-                await SendMessageToTelegram("/searching 1");
-                SearchingButton.Text = "OFF searching";
-            }
-            SearchingButton.IsEnabled = true;
+            await SearchingToggleHelper.ToggleAsync(SearchingButton, botToken, chatID);
         }
 
         private async void FlashlightButton_Clicked(object sender, EventArgs e)
         {
-            FlashlightButton.IsEnabled = false;
-            if (FlashlightButton.Text == "Turn on flashlight")
-            {
-                await SendMessageToTelegram("/flashlight ON");
-                FlashlightButton.Text = "Turn off flashlight";
-            }
-            else
-            {
-                await SendMessageToTelegram("/flashlight OFF");
-                FlashlightButton.Text = "Turn on flashlight";
-            }
-            FlashlightButton.IsEnabled = true;
+            await FlashlightToggleHelper.ToggleAsync(FlashlightButton, botToken, chatID);
         }
     }
 }

@@ -8,6 +8,10 @@
              Order="Secondary"
              x:Name="SearchingButton"
              Clicked="SearchingButton_Clicked"/>
+        <ToolbarItem Text="Turn on flashlight"
+             Order="Secondary"
+             x:Name="FlashlightButton"
+             Clicked="FlashlightButton_Clicked"/>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <Grid>

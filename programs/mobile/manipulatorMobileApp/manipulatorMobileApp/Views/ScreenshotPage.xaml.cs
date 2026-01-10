@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using manipulatorMobileApp.Helpers;
+using manipulatorMobileApp.Services;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -52,100 +52,20 @@ namespace manipulatorMobileApp.Views
         {
             try
             {
-                var update = result.Last;
-                var channelPost = update["channel_post"];
-                if (channelPost?["photo"] != null)
+                var photoResult = await TelegramService.FetchLatestPhotoAsync(botToken, result);
+                if (photoResult == null)
                 {
-                    var photoArray = channelPost["photo"];
-                    var caption = channelPost["caption"]?.ToString() ?? "";
-
-                    var fileId = photoArray.Last["file_id"].ToString();
-                    using (HttpClient client = new HttpClient())
-                    {
-                        var fileUrlResponse = await client.GetStringAsync(
-                            $"https://api.telegram.org/bot{botToken}/getFile?file_id={fileId}");
-                        var filePath = Newtonsoft.Json.Linq.JObject.Parse(fileUrlResponse)["result"]["file_path"].ToString();
-                        var fileUrl = $"https://api.telegram.org/file/bot{botToken}/{filePath}";
-
-                        var imageBytes = await client.GetByteArrayAsync(fileUrl);
-                        imageView.Source = ImageSource.FromStream(() => new MemoryStream(imageBytes));
-                        AddWordsToCollection(caption);
-                    }
+                    return;
                 }
+
+                imageView.Source = ImageSource.FromStream(
+                    () => new MemoryStream(photoResult.ImageBytes)
+                );
+                AddWordsToCollection(photoResult.Caption);
             }
             catch (Exception ex)
             {
                 DependencyService.Get<IToast>().Show($"Error! {ex.Message}");
-            }
-        }
-
-        private async Task SendMessageToTelegram(string message)
-        {
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    var url = $"https://api.telegram.org/bot{botToken}/sendMessage";
-                    var content = new FormUrlEncodedContent(new[]
-                    {
-                        new KeyValuePair<string, string>("chat_id", chatID),
-                        new KeyValuePair<string, string>("text", message)
-                    });
-
-                    var response = await client.PostAsync(url, content);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        DependencyService.Get<IToast>().Show("Success! Request has been sent to Telegram!");
-                    }
-                    else
-                    {
-                        DependencyService.Get<IToast>().Show("Error! Request has not been sent to Telegram!");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                DependencyService.Get<IToast>().Show($"Error! {ex.Message}");
-            }
-        }
-
-        private async Task<JToken> WaitForNewMessageAsync(CancellationToken cancellationToken)
-        {
-            const int intervalMilliseconds = 250;
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    var url = $"https://api.telegram.org/bot{botToken}/getUpdates?offset={lastUpdateId + 1}";
-                    var response = await client.GetStringAsync(url);
-                    var updates = Newtonsoft.Json.Linq.JObject.Parse(response);
-                    var result = updates["result"];
-
-                    if (result != null && result.HasValues)
-                    {
-                        lastUpdateId = result.Last["update_id"].Value<int>();
-                        return result;
-                    }
-                }
-
-                await Task.Delay(intervalMilliseconds, cancellationToken);
-            }
-
-            return null;
-        }
-
-        private async Task UpdateLastID()
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                var url = $"https://api.telegram.org/bot{botToken}/getUpdates";
-                var response = await client.GetStringAsync(url);
-                var updates = Newtonsoft.Json.Linq.JObject.Parse(response);
-                var result = updates["result"];
-                if (result != null && result.HasValues)
-                {
-                    lastUpdateId = result.Last["update_id"].Value<int>();
-                }
             }
         }
 
@@ -161,15 +81,20 @@ namespace manipulatorMobileApp.Views
             }
             try
             {
-                await SendMessageToTelegram("/get_image");
-                await UpdateLastID();
+                await TelegramService.SendMessageAsync(botToken, chatID, "/get_image");
+                lastUpdateId = await TelegramService.GetLastUpdateIdAsync(botToken);
                 using (var cts = new CancellationTokenSource(10000))
                 {
-                    var result = await WaitForNewMessageAsync(cts.Token);
+                    var updateResult = await TelegramService.WaitForNewMessageAsync(
+                        botToken,
+                        lastUpdateId,
+                        cts.Token
+                    );
 
-                    if (result != null)
+                    if (updateResult != null)
                     {
-                        await FetchImageFromTelegram(result);
+                        lastUpdateId = updateResult.LastUpdateId;
+                        await FetchImageFromTelegram(updateResult.Updates);
                     }
                     else
                     {
@@ -212,7 +137,7 @@ namespace manipulatorMobileApp.Views
                 }
                 ItemModel selectedItem = e.CurrentSelection[0] as ItemModel;
                 string selectedWord = selectedItem.Word.Trim();
-                await SendMessageToTelegram($"/selection {selectedWord}");
+                await TelegramService.SendMessageAsync(botToken, chatID, $"/selection {selectedWord}");
             }
             catch (IOException ex)
             {
@@ -226,18 +151,12 @@ namespace manipulatorMobileApp.Views
 
         private async void SearchingButton_Clicked(object sender, EventArgs e)
         {
-            SearchingButton.IsEnabled = false;
-            if (SearchingButton.Text == "OFF searching")
-            {
-                await SendMessageToTelegram("/searching 0");
-                SearchingButton.Text = "ON searching";
-            }
-            else
-            {
-                await SendMessageToTelegram("/searching 1");
-                SearchingButton.Text = "OFF searching";
-            }
-            SearchingButton.IsEnabled = true;
+            await SearchingToggleHelper.ToggleAsync(SearchingButton, botToken, chatID);
+        }
+
+        private async void FlashlightButton_Clicked(object sender, EventArgs e)
+        {
+            await FlashlightToggleHelper.ToggleAsync(FlashlightButton, botToken, chatID);
         }
     }
 }
