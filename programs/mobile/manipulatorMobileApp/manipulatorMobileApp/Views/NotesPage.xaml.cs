@@ -90,7 +90,7 @@ namespace manipulatorMobileApp.Views
         {
             collectionView.ItemsSource = await App.RecordsDB.GetNotesAsync();
             await getAPIKey();
-            _clientText = new ChatClient(model: "gpt-4o", apiKey: key);
+            _clientText = new ChatClient(model: "gpt-4o-mini", apiKey: key);
             base.OnAppearing();
         }
 
