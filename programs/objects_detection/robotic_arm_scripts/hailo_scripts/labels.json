@@ -2,7 +2,7 @@
     "detection_threshold": 0.4,
     "max_boxes": 100,
     "labels": [
-	"null",
+	    "null",
         "apple",
         "bear",
         "bird",

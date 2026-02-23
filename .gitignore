@@ -22,3 +22,7 @@ pycache/
 *.mode2v3
 *.perspectivev3
 *.pbxuser
+venv/
+.env
+run_yolo_camera.py
+setup_env.sh
