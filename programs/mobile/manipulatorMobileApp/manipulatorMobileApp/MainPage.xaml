@@ -35,6 +35,29 @@
                     TextColor="Gray"
                     x:Name="chatID"
                     MaxLength="20"/>
+
+            <!-- ── Multimodal chatbot settings (optional) ── -->
+            <Label Text="Chatbot settings (optional)"
+                   TextColor="Gray"
+                   FontSize="Small"
+                   Margin="0,8,0,0"/>
+            <Editor Placeholder="Chatbot URL (e.g. http://35.156.245.59)"
+                    PlaceholderColor="Gray"
+                    TextColor="Gray"
+                    x:Name="chatbotUrl"
+                    MaxLength="256"/>
+            <Editor Placeholder="Chatbot auth user"
+                    PlaceholderColor="Gray"
+                    TextColor="Gray"
+                    x:Name="chatbotAuthUser"
+                    MaxLength="128"/>
+            <Entry Placeholder="Chatbot auth password"
+                   PlaceholderColor="Gray"
+                   TextColor="Gray"
+                   IsPassword="True"
+                   x:Name="chatbotAuthPassword"
+                   MaxLength="128"/>
+
             <Button Margin="10"
                     CornerRadius="10"
                     Clicked="SaveServer_Clicked"

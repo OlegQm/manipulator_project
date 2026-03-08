@@ -13,6 +13,9 @@ namespace manipulatorMobileApp
             botName.Text = server.name;
             token.Text = server.botToken;
             chatID.Text = server.chatID;
+            chatbotUrl.Text = server.chatbotUrl;
+            chatbotAuthUser.Text = server.chatbotAuthUser;
+            chatbotAuthPassword.Text = server.chatbotAuthPassword;
         }
 
         private async void RefreshCollection()
@@ -92,6 +95,9 @@ namespace manipulatorMobileApp
                 server.name = !string.IsNullOrWhiteSpace(botName.Text) ? botName.Text : Convert.ToString(DateTime.Now);
                 server.botToken = token.Text.Trim();
                 server.chatID = chatID.Text.Trim();
+                server.chatbotUrl = chatbotUrl.Text?.Trim();
+                server.chatbotAuthUser = chatbotAuthUser.Text?.Trim();
+                server.chatbotAuthPassword = chatbotAuthPassword.Text;
                 server.Date = DateTime.Now;
                 await App.ServersDB.SaveServerAsync(server);
                 collectionView.ItemsSource = await App.ServersDB.GetServersAsync();
@@ -106,6 +112,9 @@ namespace manipulatorMobileApp
                 {
                     existingRecord.botToken = token.Text.Trim();
                     existingRecord.chatID = chatID.Text.Trim();
+                    existingRecord.chatbotUrl = chatbotUrl.Text?.Trim();
+                    existingRecord.chatbotAuthUser = chatbotAuthUser.Text?.Trim();
+                    existingRecord.chatbotAuthPassword = chatbotAuthPassword.Text;
                     existingRecord.Date = DateTime.Now;
                     await App.ServersDB.SaveServerAsync(existingRecord);
                     RefreshCollection();
@@ -141,7 +150,10 @@ namespace manipulatorMobileApp
             startWorking.IsEnabled = false;
             ModeSelectionPage msPage = new ModeSelectionPage(
                 token.Text.Trim(),
-                chatID.Text.Trim()
+                chatID.Text.Trim(),
+                chatbotUrl.Text?.Trim(),
+                chatbotAuthUser.Text?.Trim(),
+                chatbotAuthPassword.Text
             );
             await Navigation.PushAsync(msPage);
             startWorking.IsEnabled = true;

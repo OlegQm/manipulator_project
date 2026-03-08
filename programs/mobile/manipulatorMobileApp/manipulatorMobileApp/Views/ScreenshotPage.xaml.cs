@@ -19,11 +19,23 @@ namespace manipulatorMobileApp.Views
         private string chatID;
         private int lastUpdateId = 0;
 
-        public ScreenshotPage(string botToken, string chatID)
+        // Chatbot connection settings (forwarded from server config)
+        private string chatbotUrl;
+        private string chatbotAuthUser;
+        private string chatbotAuthPassword;
+
+        // Raw image bytes of the last successful screenshot — sent to the chatbot on first message
+        private byte[] _imageBytes;
+
+        public ScreenshotPage(string botToken, string chatID,
+            string chatbotUrl = null, string chatbotAuthUser = null, string chatbotAuthPassword = null)
         {
             InitializeComponent();
             this.botToken = botToken;
             this.chatID = chatID;
+            this.chatbotUrl = chatbotUrl;
+            this.chatbotAuthUser = chatbotAuthUser;
+            this.chatbotAuthPassword = chatbotAuthPassword;
         }
 
         public class ItemModel
@@ -57,6 +69,10 @@ namespace manipulatorMobileApp.Views
                 {
                     return;
                 }
+
+                // Store raw bytes so we can forward the image to the chatbot
+                _imageBytes = photoResult.ImageBytes;
+                ChatButton.IsEnabled = true;
 
                 imageView.Source = ImageSource.FromStream(
                     () => new MemoryStream(photoResult.ImageBytes)
@@ -157,6 +173,32 @@ namespace manipulatorMobileApp.Views
         private async void FlashlightButton_Clicked(object sender, EventArgs e)
         {
             await FlashlightToggleHelper.ToggleAsync(FlashlightButton, botToken, chatID);
+        }
+
+        /// <summary>
+        /// Opens the chatbot chat page. The button is only active after an image has been
+        /// received from Telegram (<see cref="_imageBytes"/> is not null).
+        /// Validates that chatbot connection settings are configured before navigating.
+        /// </summary>
+        private async void ChatButton_Clicked(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(chatbotUrl))
+            {
+                DependencyService.Get<IToast>().Show(
+                    "Chatbot URL is not configured. Please add it in the server settings.");
+                return;
+            }
+
+            ChatButton.IsEnabled = false;
+            try
+            {
+                var chatPage = new ChatPage(_imageBytes, chatbotUrl, chatbotAuthUser, chatbotAuthPassword);
+                await Navigation.PushAsync(chatPage);
+            }
+            finally
+            {
+                ChatButton.IsEnabled = true;
+            }
         }
     }
 }
