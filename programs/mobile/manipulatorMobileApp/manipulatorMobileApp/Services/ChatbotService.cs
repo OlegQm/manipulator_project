@@ -16,34 +16,54 @@ namespace manipulatorMobileApp.Services
     ///   POST   /api/v1/sessions           — create a session, returns session_id
     ///   POST   /api/v1/chat               — send a message, returns agent response
     ///   DELETE /api/v1/sessions/{id}      — delete a session
+    ///
+    /// A single static HttpClient is reused across all requests to avoid socket
+    /// exhaustion that would result from creating a new instance per call.
+    /// Auth credentials are attached per-request via HttpRequestMessage so that
+    /// different servers with different credentials can be used within the same session.
     /// </summary>
     public static class ChatbotService
     {
+        // One instance for the lifetime of the app — safe to share across threads.
+        private static readonly HttpClient _client = new HttpClient
+        {
+            Timeout = TimeSpan.FromSeconds(30)
+        };
+
         // ──────────────────────────────────────────────────────────
         // Helpers
         // ──────────────────────────────────────────────────────────
 
         /// <summary>
-        /// Builds the Authorization header value for HTTP Basic authentication.
+        /// Creates an <see cref="AuthenticationHeaderValue"/> for HTTP Basic auth,
+        /// or returns null when no username is provided.
         /// </summary>
-        private static string BuildBasicAuth(string user, string pass)
+        private static AuthenticationHeaderValue BuildBasicAuth(string user, string pass)
         {
-            string credentials = $"{user}:{pass}";
+            if (string.IsNullOrWhiteSpace(user))
+                return null;
+
+            string credentials = $"{user}:{pass ?? string.Empty}";
             string encoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(credentials));
-            return $"Basic {encoded}";
+            return new AuthenticationHeaderValue("Basic", encoded);
         }
 
         /// <summary>
-        /// Creates a pre-configured HttpClient for a single request.
-        /// A new instance per call matches the rest of the app (TelegramService pattern).
+        /// Creates an <see cref="HttpRequestMessage"/> pre-configured with the correct
+        /// per-request Authorization header and content.
         /// </summary>
-        private static HttpClient CreateClient(string user, string pass)
+        private static HttpRequestMessage BuildRequest(
+            HttpMethod method,
+            string url,
+            string authUser,
+            string authPass,
+            HttpContent content = null)
         {
-            var client = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
-            if (!string.IsNullOrWhiteSpace(user))
-                client.DefaultRequestHeaders.Authorization =
-                    AuthenticationHeaderValue.Parse(BuildBasicAuth(user, pass ?? string.Empty));
-            return client;
+            var request = new HttpRequestMessage(method, url);
+            request.Headers.Authorization = BuildBasicAuth(authUser, authPass);
+            if (content != null)
+                request.Content = content;
+            return request;
         }
 
         // ──────────────────────────────────────────────────────────
@@ -62,10 +82,11 @@ namespace manipulatorMobileApp.Services
             string authUser,
             string authPass)
         {
-            using (var client = CreateClient(authUser, authPass))
+            string url = $"{baseUrl.TrimEnd('/')}/api/v1/sessions";
+            using (var request = BuildRequest(HttpMethod.Post, url, authUser, authPass,
+                       new StringContent(string.Empty)))
             {
-                string url = $"{baseUrl.TrimEnd('/')}/api/v1/sessions";
-                var response = await client.PostAsync(url, new StringContent(string.Empty));
+                var response = await _client.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 string json = await response.Content.ReadAsStringAsync();
                 var obj = JObject.Parse(json);
@@ -93,24 +114,23 @@ namespace manipulatorMobileApp.Services
             string authUser,
             string authPass)
         {
-            using (var client = CreateClient(authUser, authPass))
+            string url = $"{baseUrl.TrimEnd('/')}/api/v1/chat";
+
+            var payload = new
             {
-                string url = $"{baseUrl.TrimEnd('/')}/api/v1/chat";
+                session_id = sessionId,
+                message = message,
+                image = imageBase64   // null → field omitted by serialiser
+            };
 
-                var payload = new
-                {
-                    session_id = sessionId,
-                    message = message,
-                    image = imageBase64   // null means the field is omitted by JSON serialiser
-                };
+            string body = JsonConvert.SerializeObject(payload,
+                new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
-                string body = JsonConvert.SerializeObject(payload,
-                    new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
-
-                var content = new StringContent(body, Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(url, content);
+            var jsonContent = new StringContent(body, Encoding.UTF8, "application/json");
+            using (var request = BuildRequest(HttpMethod.Post, url, authUser, authPass, jsonContent))
+            {
+                var response = await _client.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-
                 string json = await response.Content.ReadAsStringAsync();
                 var obj = JObject.Parse(json);
                 return obj["response"]?.ToString();
@@ -133,10 +153,10 @@ namespace manipulatorMobileApp.Services
         {
             try
             {
-                using (var client = CreateClient(authUser, authPass))
+                string url = $"{baseUrl.TrimEnd('/')}/api/v1/sessions/{sessionId}";
+                using (var request = BuildRequest(HttpMethod.Delete, url, authUser, authPass))
                 {
-                    string url = $"{baseUrl.TrimEnd('/')}/api/v1/sessions/{sessionId}";
-                    await client.DeleteAsync(url);
+                    await _client.SendAsync(request);
                     // Response status is intentionally ignored — best-effort cleanup.
                 }
             }

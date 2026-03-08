@@ -122,7 +122,7 @@
 
             <Button Grid.Column="1"
                     x:Name="sendBtn"
-                    Text="⬆"
+                    Text="Send"
                     FontSize="18"
                     TextColor="White"
                     BackgroundColor="#1A73E8"

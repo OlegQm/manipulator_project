@@ -31,7 +31,7 @@ namespace manipulatorMobileApp.Views
         private async void ObjectListBtn_Clicked(object sender, EventArgs e)
         {
             objectListBtn.IsEnabled = false;
-            NotesPage objectsList = new NotesPage(token, chatID, chatbotUrl, chatbotAuthUser, chatbotAuthPassword);
+            NotesPage objectsList = new NotesPage(token, chatID);
             await Navigation.PushAsync(objectsList);
             objectListBtn.IsEnabled = true;
         }

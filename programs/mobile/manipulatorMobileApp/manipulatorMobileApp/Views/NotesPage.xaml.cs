@@ -29,13 +29,11 @@ namespace manipulatorMobileApp.Views
 
         private string botToken;
         private string chatID;
-        public NotesPage(string botToken, string chatID,
-            string chatbotUrl = null, string chatbotAuthUser = null, string chatbotAuthPassword = null)
+        public NotesPage(string botToken, string chatID)
         {
             InitializeComponent();
             this.botToken = botToken;
             this.chatID = chatID;
-            // chatbot fields reserved for future integration
         }
 
         private async Task getAPIKey()
