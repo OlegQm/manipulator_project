@@ -1,0 +1,78 @@
+name: Deploy Multimodal Chatbot
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "programs/multimodal_chatbot/**"
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Tests in Docker
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: programs/multimodal_chatbot
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run tests in container
+        run: docker compose --profile test run --rm tests
+
+  deploy:
+    name: Deploy to Server
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Deploy to server
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          BASIC_AUTH_USER: ${{ secrets.BASIC_AUTH_USER }}
+          BASIC_AUTH_PASSWORD: ${{ secrets.BASIC_AUTH_PASSWORD }}
+        run: |
+          SSH_CMD="ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST}"
+
+          # Ensure target directory exists
+          $SSH_CMD "mkdir -p /home/${SERVER_USER}/multimodal_chatbot"
+
+          # Sync project files to server
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            --exclude '.venv' \
+            --exclude '__pycache__' \
+            --exclude '.env' \
+            --exclude '.pytest_cache' \
+            programs/multimodal_chatbot/ \
+            ${SERVER_USER}@${SERVER_HOST}:/home/${SERVER_USER}/multimodal_chatbot/
+
+          # Write .env file from GitHub Secrets
+          $SSH_CMD "cat > /home/${SERVER_USER}/multimodal_chatbot/.env << 'ENVEOF'
+          OPENAI_API_KEY=${OPENAI_API_KEY}
+          OPENAI_MODEL=gpt-5-mini
+          REDIS_URL=redis://redis:6379/0
+          SESSION_TTL_SECONDS=3600
+          CLEANUP_INTERVAL_SECONDS=600
+          MAX_CONTEXT_TOKENS=100000
+          BASIC_AUTH_USER=${BASIC_AUTH_USER}
+          BASIC_AUTH_PASSWORD=${BASIC_AUTH_PASSWORD}
+          LOG_LEVEL=INFO
+          ENVEOF"
+
+          # Deploy with Docker Compose
+          $SSH_CMD "cd /home/${SERVER_USER}/multimodal_chatbot && docker compose down && docker compose up -d --build"

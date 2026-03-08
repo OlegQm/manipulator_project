@@ -58,7 +58,7 @@ class LCA(nn.Module):
 
 class ConvLCA(nn.Module):
     """
-    Conv + LCA (replacement for ConvSE).
+    Conv + LCA.
     """
 
     def __init__(self, c1, c2, k=3, s=1, p=None, g=1, act=True, attn_k: int = 3, attn_r: int = 8):

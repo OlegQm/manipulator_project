@@ -1,0 +1,74 @@
+services:
+  # --- FastAPI application ---
+  app:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    container_name: chatbot-app
+    env_file:
+      - .env
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - chatbot-net
+
+  # --- Redis for session storage ---
+  redis:
+    image: redis:7-alpine
+    container_name: chatbot-redis
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - chatbot-net
+
+  # --- Test runner (on-demand via: docker compose run --rm tests) ---
+  tests:
+    build:
+      context: .
+      dockerfile: tests/Dockerfile
+    container_name: chatbot-tests
+    environment:
+      - OPENAI_API_KEY=test-key-not-real
+      - REDIS_URL=redis://redis:6379/0
+      - BASIC_AUTH_USER=testuser
+      - BASIC_AUTH_PASSWORD=testpass
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - test
+    networks:
+      - chatbot-net
+
+  # --- Nginx reverse proxy with basic auth ---
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: chatbot-nginx
+    ports:
+      - "80:80"
+    environment:
+      - BASIC_AUTH_USER=${BASIC_AUTH_USER}
+      - BASIC_AUTH_PASSWORD=${BASIC_AUTH_PASSWORD}
+    depends_on:
+      - app
+    restart: unless-stopped
+    networks:
+      - chatbot-net
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  chatbot-net:
+    driver: bridge
