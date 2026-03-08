@@ -1,0 +1,42 @@
+# ── Secrets (never bake into image) ─────────────────────────────────────────
+.env
+**/.env.local
+
+# ── Python byte-code & caches ────────────────────────────────────────────────
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/*.egg-info/
+**/*.egg
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+.venv/
+venv/
+
+# ── Test / coverage artefacts ─────────────────────────────────────────────────
+.pytest_cache/
+**/.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+.mypy_cache/
+
+# ── Documentation & instructions (not needed at runtime) ──────────────────────
+README.md
+agent-instructions/
+
+# ── Git metadata ──────────────────────────────────────────────────────────────
+.git/
+.gitignore
+
+# ── Editor artefacts ──────────────────────────────────────────────────────────
+.vscode/
+.idea/
+
+# ── OS artefacts ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log

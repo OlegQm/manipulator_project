@@ -1,0 +1,8 @@
+# Nginx build context is already minimal (just nginx/ folder).
+# Exclude editor artefacts and OS files.
+
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/

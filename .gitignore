@@ -1,17 +1,52 @@
+### Secrets & keys ###
 **/api_key.txt
+.env
+**/.env.local
+**/.env.*.local
+
+### Python ###
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/*.egg-info/
+**/*.egg
+dist/
+build/
+**/.mypy_cache/
+**/.pytest_cache/
+**/.coverage
+**/htmlcov/
+**/coverage.xml
+**/.tox/
+
+### Virtual environments ###
+venv/
+.venv/
+**/venv/
+**/.venv/
+
+### Logs ###
+*.log
+
+### OS artefacts ###
+.DS_Store
+Thumbs.db
+
+### Editors ###
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+### .NET / C# ###
 **/bin/
 **/obj/
 **/Debug/
 **/Release/
-.vs/
-.idea/
-*.user
-*.suo
-.DS_Store
-Thumbs.db
-*.log
-pycache/
-*.pyc
+
+### Mobile build outputs ###
 *.apk
 *.ipa
 *.app/
@@ -22,8 +57,7 @@ pycache/
 *.mode2v3
 *.perspectivev3
 *.pbxuser
-venv/
-.venv/
-.env
+
+### Project-specific ignores ###
 run_yolo_camera.py
 setup_env.sh
