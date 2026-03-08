@@ -19,6 +19,22 @@ from app.models.session import ChatMessageRecord, SessionInfoResponse
 
 logger = logging.getLogger(__name__)
 
+# Module-level reference set during app startup, used by tools
+_session_manager: Optional["SessionManager"] = None
+
+
+def get_session_manager() -> "SessionManager":
+    """Return the globally registered SessionManager instance."""
+    if _session_manager is None:
+        raise RuntimeError("SessionManager not initialized yet")
+    return _session_manager
+
+
+def set_session_manager(manager: "SessionManager") -> None:
+    """Register the SessionManager instance for global access (called at startup)."""
+    global _session_manager
+    _session_manager = manager
+
 
 class SessionManager:
     """Manages chat sessions stored in Redis."""
@@ -50,6 +66,11 @@ class SessionManager:
     def _messages_key(session_id: str) -> str:
         """Return the Redis key for session messages list."""
         return f"session:{session_id}:messages"
+
+    @staticmethod
+    def _image_key(session_id: str, image_id: str) -> str:
+        """Return the Redis key for a stored image."""
+        return f"session:{session_id}:image:{image_id}"
 
     # ── CRUD ──────────────────────────────────────────────────────────
 
@@ -103,9 +124,18 @@ class SessionManager:
         """
         meta_key = self._meta_key(session_id)
         msgs_key = self._messages_key(session_id)
-        deleted = await self._redis.delete(meta_key, msgs_key)
+
+        # Collect image keys belonging to this session
+        image_keys: list[str] = []
+        async for key in self._redis.scan_iter(
+            match=f"session:{session_id}:image:*"
+        ):
+            image_keys.append(key)
+
+        keys_to_delete = [meta_key, msgs_key] + image_keys
+        deleted = await self._redis.delete(*keys_to_delete)
         if deleted > 0:
-            logger.info("Deleted session %s", session_id)
+            logger.info("Deleted session %s (%d image(s))", session_id, len(image_keys))
             return True
         return False
 
@@ -117,6 +147,7 @@ class SessionManager:
         role: str,
         content: str,
         has_image: bool = False,
+        image_id: Optional[str] = None,
     ) -> None:
         """
         Append a message to the session history and update last_activity.
@@ -126,12 +157,14 @@ class SessionManager:
             role: 'user' or 'assistant'.
             content: Text content of the message.
             has_image: Whether the message included an image attachment.
+            image_id: UUID of the stored image (if any).
         """
         now_iso = datetime.now(timezone.utc).isoformat()
         record = {
             "role": role,
             "content": content,
             "has_image": has_image,
+            "image_id": image_id,
             "timestamp": now_iso,
         }
         pipe = self._redis.pipeline()
@@ -152,6 +185,41 @@ class SessionManager:
             data = json.loads(raw)
             records.append(ChatMessageRecord(**data))
         return records
+
+    # ── Image storage ─────────────────────────────────────────────────
+
+    async def store_image(
+        self, session_id: str, image_b64: str,
+    ) -> str:
+        """
+        Store a base64-encoded image in Redis, tied to the session lifetime.
+
+        Args:
+            session_id: Session UUID that owns this image.
+            image_b64: Base64-encoded image data.
+
+        Returns:
+            A unique image_id that can be used to retrieve the image.
+        """
+        image_id = str(uuid.uuid4())
+        key = self._image_key(session_id, image_id)
+        await self._redis.set(key, image_b64)
+        logger.info("Stored image %s for session %s", image_id, session_id)
+        return image_id
+
+    async def get_image(self, session_id: str, image_id: str) -> Optional[str]:
+        """
+        Retrieve a stored base64-encoded image.
+
+        Args:
+            session_id: Session UUID that owns the image.
+            image_id: The image identifier returned by store_image.
+
+        Returns:
+            Base64-encoded image data, or None if not found.
+        """
+        key = self._image_key(session_id, image_id)
+        return await self._redis.get(key)
 
     # ── Token counting ────────────────────────────────────────────────
 

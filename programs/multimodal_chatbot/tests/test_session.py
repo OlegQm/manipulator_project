@@ -131,6 +131,41 @@ async def test_last_activity_updates(session_manager):
     assert updated >= initial
 
 
+# ── Image storage unit tests ─────────────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_store_and_retrieve_image(session_manager):
+    """Storing an image returns an ID that can be used to retrieve it."""
+    session_id, _ = await session_manager.create_session()
+    fake_b64 = "iVBORw0KGgoAAAANSUhEUg=="
+    image_id = await session_manager.store_image(session_id, fake_b64)
+    assert isinstance(image_id, str)
+    assert len(image_id) == 36  # UUID4 format
+
+    retrieved = await session_manager.get_image(session_id, image_id)
+    assert retrieved == fake_b64
+
+
+@pytest.mark.asyncio
+async def test_get_image_not_found(session_manager):
+    """get_image returns None for nonexistent image."""
+    session_id, _ = await session_manager.create_session()
+    result = await session_manager.get_image(session_id, "nonexistent-image-id")
+    assert result is None
+
+
+@pytest.mark.asyncio
+async def test_delete_session_removes_images(session_manager):
+    """Deleting a session also removes its stored images."""
+    session_id, _ = await session_manager.create_session()
+    image_id = await session_manager.store_image(session_id, "somebase64data")
+    assert await session_manager.get_image(session_id, image_id) is not None
+
+    await session_manager.delete_session(session_id)
+    assert await session_manager.get_image(session_id, image_id) is None
+
+
 # ── Cleanup unit tests ───────────────────────────────────────────────
 
 

@@ -17,7 +17,7 @@ import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
 from app.config import Settings
-from app.services.session_manager import SessionManager
+from app.services.session_manager import SessionManager, set_session_manager
 
 
 @pytest.fixture(scope="session")
@@ -76,8 +76,10 @@ async def test_client(fake_redis, test_settings) -> AsyncGenerator[AsyncClient, 
 
     # Override lifespan-created state with test fixtures
     app.state.redis = fake_redis
-    app.state.session_manager = SessionManager(fake_redis, test_settings)
+    sm = SessionManager(fake_redis, test_settings)
+    app.state.session_manager = sm
     app.state.settings = test_settings
+    set_session_manager(sm)
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:

@@ -3,6 +3,7 @@ Pydantic models for session-related request and response schemas.
 """
 
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -42,5 +43,9 @@ class ChatMessageRecord(BaseModel):
     has_image: bool = Field(
         default=False,
         description="Whether this message included an image attachment",
+    )
+    image_id: Optional[str] = Field(
+        default=None,
+        description="UUID of the image stored in Redis (if any)",
     )
     timestamp: datetime = Field(..., description="When this message was recorded")

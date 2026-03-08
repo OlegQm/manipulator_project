@@ -65,13 +65,18 @@ async def chat(request: Request, body: ChatRequest) -> ChatResponse | JSONRespon
         error_resp = TokenLimitExceededResponse(session_id=body.session_id)
         return JSONResponse(status_code=409, content=error_resp.model_dump())
 
-    # 3. Store user message
-    has_image = body.image is not None or body.image_url is not None
+    # 3. Store user message (and image if present)
+    image_id: str | None = None
+    if body.image:
+        image_id = await session_manager.store_image(body.session_id, body.image)
+    has_image = image_id is not None or body.image_url is not None
+
     await session_manager.add_message(
         session_id=body.session_id,
         role="user",
         content=body.message,
         has_image=has_image,
+        image_id=image_id,
     )
 
     # 4. Get history and invoke agent
@@ -84,7 +89,8 @@ async def chat(request: Request, body: ChatRequest) -> ChatResponse | JSONRespon
             settings=settings,
             history=history_for_agent,
             user_message=body.message,
-            image_b64=body.image,
+            session_id=body.session_id,
+            image_id=image_id,
             image_url=body.image_url,
         )
     except Exception:

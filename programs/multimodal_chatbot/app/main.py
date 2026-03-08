@@ -16,7 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import get_settings
 from app.routers import chat, health, session
 from app.services.cleanup import start_cleanup_scheduler, stop_cleanup_scheduler
-from app.services.session_manager import SessionManager
+from app.services.session_manager import SessionManager, set_session_manager
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +59,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     # Initialize services
     session_manager = SessionManager(redis_client, settings)
+    set_session_manager(session_manager)
 
     # Store on app.state for access in request handlers
     app.state.redis = redis_client

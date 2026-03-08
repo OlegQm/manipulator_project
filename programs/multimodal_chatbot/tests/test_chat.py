@@ -34,7 +34,7 @@ async def test_chat_text_only(test_client):
 
 @pytest.mark.asyncio
 async def test_chat_with_image(test_client):
-    """Chat with an image + text message returns a valid response."""
+    """Chat with an image stores it in Redis and passes image_id to the agent."""
     create_resp = await test_client.post("/api/v1/sessions")
     session_id = create_resp.json()["session_id"]
 
@@ -55,7 +55,59 @@ async def test_chat_with_image(test_client):
 
     assert response.status_code == 200
     data = response.json()
-    assert "image" in data["response"].lower() or len(data["response"]) > 0
+    assert len(data["response"]) > 0
+
+    # Verify the agent was called with session_id and image_id (not raw base64)
+    call_kwargs = mock_agent.call_args.kwargs
+    assert call_kwargs["session_id"] == session_id
+    assert call_kwargs["image_id"] is not None
+    assert len(call_kwargs["image_id"]) == 36  # UUID4 format
+    assert "image_b64" not in call_kwargs  # raw base64 should NOT be passed
+
+    # Verify the image_id is persisted in the message history
+    history_resp = await test_client.get(f"/api/v1/sessions/{session_id}/history")
+    history = history_resp.json()
+    assert history[0]["image_id"] == call_kwargs["image_id"]
+
+
+@pytest.mark.asyncio
+async def test_chat_followup_references_previous_image(test_client):
+    """Follow-up text message includes image annotations from history in agent call."""
+    create_resp = await test_client.post("/api/v1/sessions")
+    session_id = create_resp.json()["session_id"]
+
+    fake_image_b64 = "iVBORw0KGgoAAAANSUhEUg=="
+
+    # First message: send image
+    with patch("app.routers.chat.invoke_agent", new_callable=AsyncMock) as mock_agent:
+        mock_agent.return_value = "I see a test image."
+        await test_client.post(
+            "/api/v1/chat",
+            json={
+                "session_id": session_id,
+                "message": "Describe this",
+                "image": fake_image_b64,
+            },
+        )
+    first_image_id = mock_agent.call_args.kwargs["image_id"]
+
+    # Second message: text-only follow-up about the same image
+    with patch("app.routers.chat.invoke_agent", new_callable=AsyncMock) as mock_agent2:
+        mock_agent2.return_value = "The image shows..."
+        await test_client.post(
+            "/api/v1/chat",
+            json={"session_id": session_id, "message": "What color is it?"},
+        )
+
+    # The history passed to the agent should include an annotation with the image_id
+    call_kwargs2 = mock_agent2.call_args.kwargs
+    # image_id should be None for the follow-up (no new image)
+    assert call_kwargs2["image_id"] is None
+    # But the history should contain the image_id from the first message
+    history_records = call_kwargs2["history"]
+    image_record = [r for r in history_records if r.image_id is not None]
+    assert len(image_record) == 1
+    assert image_record[0].image_id == first_image_id
 
 
 @pytest.mark.asyncio
