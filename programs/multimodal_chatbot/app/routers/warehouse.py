@@ -31,5 +31,5 @@ async def warehouse_open(warehouse_name: str) -> WarehouseStatusResponse:
     Returns "opened" or "closed" with equal probability.
     This is a stub — replace the body with real hardware logic when ready.
     """
-    status = random.choice(["opened", "closed"])
+    status = random.choice(["opened", "not opened (error)"])
     return WarehouseStatusResponse(warehouse_name=warehouse_name, status=status)
