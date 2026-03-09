@@ -16,16 +16,20 @@ router = APIRouter(prefix="/warehouse", tags=["warehouse"])
 class WarehouseStatusResponse(BaseModel):
     """Response returned by the warehouse status endpoint."""
 
+    warehouse_name: str
     status: str
 
 
 @router.get("/open", response_model=WarehouseStatusResponse)
-async def warehouse_open() -> WarehouseStatusResponse:
+async def warehouse_open(warehouse_name: str) -> WarehouseStatusResponse:
     """
-    Return a random warehouse door status.
+    Return a random warehouse door status for the given warehouse.
+
+    Args:
+        warehouse_name: Name of the warehouse to check.
 
     Returns "opened" or "closed" with equal probability.
     This is a stub — replace the body with real hardware logic when ready.
     """
     status = random.choice(["opened", "closed"])
-    return WarehouseStatusResponse(status=status)
+    return WarehouseStatusResponse(warehouse_name=warehouse_name, status=status)
