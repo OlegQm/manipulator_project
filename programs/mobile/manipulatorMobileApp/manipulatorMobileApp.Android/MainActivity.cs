@@ -23,7 +23,7 @@ namespace manipulatorMobileApp.Droid
             var content = FindViewById(Android.Resource.Id.Content);
             if (content != null)
             {
-                content.FitsSystemWindows = true;
+                content.SetFitsSystemWindows(true);
             }
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
