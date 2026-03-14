@@ -31,6 +31,7 @@ namespace manipulatorMobileApp.Views
             string chatbotUrl = null, string chatbotAuthUser = null, string chatbotAuthPassword = null)
         {
             InitializeComponent();
+            ChatButton.IsEnabled = false;
             this.botToken = botToken;
             this.chatID = chatID;
             this.chatbotUrl = chatbotUrl;

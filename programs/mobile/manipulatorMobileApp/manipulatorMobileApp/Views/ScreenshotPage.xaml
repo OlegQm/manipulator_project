@@ -7,7 +7,6 @@
         <ToolbarItem Text="Chat"
              Order="Primary"
              x:Name="ChatButton"
-             IsEnabled="False"
              Clicked="ChatButton_Clicked"/>
         <ToolbarItem Text="OFF searching"
              Order="Secondary"
