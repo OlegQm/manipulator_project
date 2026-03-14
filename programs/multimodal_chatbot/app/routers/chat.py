@@ -18,6 +18,14 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1", tags=["chat"])
 
 
+def _get_latest_session_image_id(history) -> str | None:
+    """Return the most recent stored image_id from this session history only."""
+    for record in reversed(history):
+        if record.image_id:
+            return record.image_id
+    return None
+
+
 @router.post(
     "/chat",
     response_model=ChatResponse,
@@ -84,13 +92,15 @@ async def chat(request: Request, body: ChatRequest) -> ChatResponse | JSONRespon
     # Exclude the last message (just added) — the agent function will add it
     history_for_agent = history[:-1]
 
+    active_image_id = image_id or _get_latest_session_image_id(history_for_agent)
+
     try:
         agent_response = await invoke_agent(
             settings=settings,
             history=history_for_agent,
             user_message=body.message,
             session_id=body.session_id,
-            image_id=image_id,
+            image_id=active_image_id,
             image_url=body.image_url,
         )
     except Exception:

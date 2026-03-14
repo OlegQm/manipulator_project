@@ -71,8 +71,8 @@ async def test_chat_with_image(test_client):
 
 
 @pytest.mark.asyncio
-async def test_chat_followup_references_previous_image(test_client):
-    """Follow-up text message includes image annotations from history in agent call."""
+async def test_chat_followup_reuses_previous_image_from_same_session(test_client):
+    """Follow-up text-only message reuses the latest image from the same session."""
     create_resp = await test_client.post("/api/v1/sessions")
     session_id = create_resp.json()["session_id"]
 
@@ -99,15 +99,37 @@ async def test_chat_followup_references_previous_image(test_client):
             json={"session_id": session_id, "message": "What color is it?"},
         )
 
-    # The history passed to the agent should include an annotation with the image_id
     call_kwargs2 = mock_agent2.call_args.kwargs
-    # image_id should be None for the follow-up (no new image)
-    assert call_kwargs2["image_id"] is None
-    # But the history should contain the image_id from the first message
-    history_records = call_kwargs2["history"]
-    image_record = [r for r in history_records if r.image_id is not None]
-    assert len(image_record) == 1
-    assert image_record[0].image_id == first_image_id
+    assert call_kwargs2["image_id"] == first_image_id
+
+
+@pytest.mark.asyncio
+async def test_chat_followup_does_not_reuse_image_from_another_session(test_client):
+    """Image carry-over must stay scoped to the current session only."""
+    session_a = (await test_client.post("/api/v1/sessions")).json()["session_id"]
+    session_b = (await test_client.post("/api/v1/sessions")).json()["session_id"]
+
+    fake_image_b64 = "iVBORw0KGgoAAAANSUhEUg=="
+
+    with patch("app.routers.chat.invoke_agent", new_callable=AsyncMock) as mock_agent_a:
+        mock_agent_a.return_value = "Session A image stored."
+        await test_client.post(
+            "/api/v1/chat",
+            json={
+                "session_id": session_a,
+                "message": "Remember this image",
+                "image": fake_image_b64,
+            },
+        )
+
+    with patch("app.routers.chat.invoke_agent", new_callable=AsyncMock) as mock_agent_b:
+        mock_agent_b.return_value = "Session B has no image."
+        await test_client.post(
+            "/api/v1/chat",
+            json={"session_id": session_b, "message": "Do I have an image?"},
+        )
+
+    assert mock_agent_b.call_args.kwargs["image_id"] is None
 
 
 @pytest.mark.asyncio

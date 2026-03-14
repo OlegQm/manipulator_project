@@ -4,110 +4,89 @@
              x:Class="manipulatorMobileApp.Views.ChatPage"
              BackgroundColor="#111111"
              Title="Chat">
-
-    <!--
-        Root Grid:
-          Row 0 (*) — scrollable messages area with image-attached hint
-          Row 1 (Auto) — loading indicator
-          Row 2 (Auto) — input bar (Editor + Send button)
-
-        The Grid-based layout reflows automatically in both portrait and landscape
-        on every screen size because all sizing is relative (*, Auto) or bound to
-        ChatMessage.BubbleMargin which is recomputed from the live screen width.
-    -->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- ── Messages area ─────────────────────────────────────── -->
-        <ScrollView Grid.Row="0"
-                    x:Name="messagesScrollView"
-                    Orientation="Vertical">
-            <StackLayout>
-
-                <!-- Hint shown until the first message is sent -->
+        <CollectionView Grid.Row="0"
+                        x:Name="messagesList"
+                        Margin="0,6,0,0"
+                        SelectionMode="None"
+                        VerticalOptions="FillAndExpand"
+                        ItemsUpdatingScrollMode="KeepLastItemInView"
+                        ItemSizingStrategy="MeasureAllItems">
+            <CollectionView.Header>
                 <Frame x:Name="imageHintFrame"
-                       Margin="12,12,12,4"
-                       Padding="10,8"
-                       CornerRadius="8"
+                       Margin="14,8,14,10"
+                       Padding="14,10"
+                       CornerRadius="14"
                        BackgroundColor="#2A2A2C"
                        HasShadow="False">
-                    <Label Text="🖼  Image will be attached to your first message"
+                    <Label Text="Image will be attached to your first message"
                            TextColor="#AAAAAA"
                            FontSize="Small"
-                           HorizontalTextAlignment="Center"/>
+                           LineBreakMode="WordWrap"
+                           HorizontalTextAlignment="Center"
+                           HorizontalOptions="Center"/>
                 </Frame>
-
-                <!-- Message bubbles -->
-                <CollectionView x:Name="messagesList"
-                                SelectionMode="None"
-                                ItemsUpdatingScrollMode="KeepLastItemInView">
-                    <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Vertical"
-                                           ItemSpacing="4"/>
-                    </CollectionView.ItemsLayout>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <!--
-                                Per-message row: a full-width Grid.
-                                The Frame is constrained in width by BubbleMargin
-                                (25 % push on the opposite side) and aligned via
-                                BubbleAlignment. Both values come from ChatMessage.
-                            -->
+            </CollectionView.Header>
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical"
+                                   ItemSpacing="8"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="0,0,0,2">
+                        <Frame BackgroundColor="{Binding BubbleColor}"
+                               CornerRadius="18"
+                               Padding="14,10"
+                               Margin="{Binding BubbleMargin}"
+                               HorizontalOptions="{Binding BubbleAlignment}"
+                               HasShadow="False">
                             <Grid>
-                                <Frame BackgroundColor="{Binding BubbleColor}"
-                                       CornerRadius="14"
-                                       Padding="12,8"
-                                       Margin="{Binding BubbleMargin}"
-                                       HorizontalOptions="{Binding BubbleAlignment}"
-                                       HasShadow="False">
+                                <StackLayout Orientation="Horizontal"
+                                             Spacing="8"
+                                             IsVisible="{Binding IsPendingVisible}">
+                                    <ActivityIndicator IsRunning="{Binding IsPending}"
+                                                       Color="#74AFFF"
+                                                       WidthRequest="18"
+                                                       HeightRequest="18"
+                                                       VerticalOptions="Center"/>
                                     <Label Text="{Binding Content}"
-                                           TextColor="White"
+                                           TextColor="#D6E3FF"
                                            FontSize="Default"
+                                           VerticalTextAlignment="Center"
                                            LineBreakMode="WordWrap"/>
-                                </Frame>
+                                </StackLayout>
+                                <Label Text="{Binding Content}"
+                                       IsVisible="{Binding IsMessageVisible}"
+                                       TextColor="White"
+                                       FontSize="Default"
+                                       LineBreakMode="WordWrap"/>
                             </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.Footer>
+                <BoxView HeightRequest="8"
+                         Color="Transparent"/>
+            </CollectionView.Footer>
+        </CollectionView>
 
-            </StackLayout>
-        </ScrollView>
-
-        <!-- ── Typing / loading indicator ───────────────────────── -->
-        <StackLayout Grid.Row="1"
-                     Orientation="Horizontal"
-                     Padding="16,4"
-                     x:Name="loadingRow"
-                     IsVisible="False">
-            <ActivityIndicator x:Name="loadingIndicator"
-                               IsRunning="False"
-                               Color="#1A73E8"
-                               WidthRequest="20"
-                               HeightRequest="20"
-                               VerticalOptions="Center"/>
-            <Label Text="Bot is thinking…"
-                   TextColor="#888888"
-                   FontSize="Small"
-                   VerticalOptions="Center"
-                   Margin="8,0,0,0"/>
-        </StackLayout>
-
-        <!-- ── Input bar ─────────────────────────────────────────── -->
-        <Grid Grid.Row="2"
+        <Grid Grid.Row="1"
               BackgroundColor="#1C1C1E"
-              Padding="8,6">
+              Padding="12,8,12,12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="56"/>
             </Grid.ColumnDefinitions>
 
             <Frame Grid.Column="0"
-                   CornerRadius="18"
-                   Padding="12,6"
+                   CornerRadius="20"
+                   Padding="14,8"
                    BackgroundColor="#2C2C2E"
                    HasShadow="False"
                    Margin="0,0,8,0">
@@ -117,22 +96,25 @@
                         TextColor="White"
                         BackgroundColor="Transparent"
                         AutoSize="TextChanges"
+                        SizeChanged="MessageEntry_SizeChanged"
+                        TextChanged="MessageEntry_TextChanged"
+                        VerticalOptions="Center"
                         MaxLength="2000"/>
             </Frame>
 
             <Button Grid.Column="1"
                     x:Name="sendBtn"
-                    Text="Send"
-                    FontSize="18"
+                    Text="➤"
+                    FontSize="22"
+                    FontAttributes="Bold"
                     TextColor="White"
-                    BackgroundColor="#1A73E8"
-                    CornerRadius="22"
-                    WidthRequest="44"
-                    HeightRequest="44"
+                    BackgroundColor="#2A78E4"
+                    CornerRadius="24"
+                    WidthRequest="48"
+                    HeightRequest="48"
                     Padding="0"
                     VerticalOptions="End"
                     Clicked="SendBtn_Clicked"/>
         </Grid>
-
     </Grid>
 </ContentPage>

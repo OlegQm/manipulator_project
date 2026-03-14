@@ -38,6 +38,10 @@ namespace manipulatorMobileApp.Views
 
         /// <summary>True once the image has been included in a chat request.</summary>
         private bool _imageSent;
+        private ChatMessage _pendingBotMessage;
+        private double _defaultMessageEntryHeight;
+        private double _maxMessageEntryHeight;
+        private bool _isAdjustingMessageEntryHeight;
 
         /// <summary>Bound to the CollectionView ItemsSource.</summary>
         public ObservableCollection<ChatMessage> Messages { get; } =
@@ -89,7 +93,18 @@ namespace manipulatorMobileApp.Views
 
             // Re-seed on every orientation change so BubbleMargin stays correct.
             if (width > 0)
+            {
                 ChatMessage.SetScreenWidth(width);
+                foreach (var message in Messages)
+                {
+                    message.RefreshLayoutProperties();
+                }
+            }
+
+            if (height > 0)
+            {
+                UpdateMessageEntryHeightLimit(height);
+            }
         }
 
         /// <summary>
@@ -119,7 +134,7 @@ namespace manipulatorMobileApp.Views
         /// </summary>
         private async Task CreateSessionAsync()
         {
-            SetInputEnabled(false);
+            SetComposerEnabled(false);
             try
             {
                 _sessionId = await ChatbotService.CreateSessionAsync(_chatbotUrl, _authUser, _authPass);
@@ -134,7 +149,7 @@ namespace manipulatorMobileApp.Views
             }
             finally
             {
-                SetInputEnabled(true);
+                SetComposerEnabled(true);
             }
         }
 
@@ -162,11 +177,21 @@ namespace manipulatorMobileApp.Views
 
             // ── Prepare UI ──────────────────────────────────────
             messageEntry.Text = string.Empty;
-            SetInputEnabled(false);
-            ShowLoading(true);
+            ResetMessageEntryHeight();
+            SetSendEnabled(false);
 
             // ── Add user bubble ─────────────────────────────────
             Messages.Add(new ChatMessage { Role = "user", Content = text });
+            await ScrollToBottomAsync();
+
+            // ── Add pending bot bubble ──────────────────────────
+            _pendingBotMessage = new ChatMessage
+            {
+                Role = "assistant",
+                Content = "Bot is thinking...",
+                IsPending = true
+            };
+            Messages.Add(_pendingBotMessage);
             await ScrollToBottomAsync();
 
             // ── Call chatbot ────────────────────────────────────
@@ -203,13 +228,18 @@ namespace manipulatorMobileApp.Views
                     _imageSent = false;
             }
 
-            // ── Add bot bubble ──────────────────────────────────
-            Messages.Add(new ChatMessage { Role = "assistant", Content = botResponse });
+            // ── Replace pending bot bubble with final response ──
+            if (_pendingBotMessage != null)
+            {
+                _pendingBotMessage.Content = botResponse;
+                _pendingBotMessage.IsPending = false;
+                _pendingBotMessage = null;
+            }
+
             await ScrollToBottomAsync();
 
             // ── Restore UI ──────────────────────────────────────
-            ShowLoading(false);
-            SetInputEnabled(true);
+            SetSendEnabled(true);
             messageEntry.Focus();
         }
 
@@ -217,24 +247,90 @@ namespace manipulatorMobileApp.Views
         // UI helpers
         // ──────────────────────────────────────────────────────────
 
-        /// <summary>Enables or disables the message input and send button.</summary>
-        private void SetInputEnabled(bool enabled)
+        /// <summary>Enables or disables the entire composer area.</summary>
+        private void SetComposerEnabled(bool enabled)
         {
             messageEntry.IsEnabled = enabled;
             sendBtn.IsEnabled = enabled;
         }
 
-        /// <summary>Shows or hides the "bot is thinking" indicator row.</summary>
-        private void ShowLoading(bool visible)
+        /// <summary>Keeps typing enabled while a request is in flight, but prevents duplicate sends.</summary>
+        private void SetSendEnabled(bool enabled)
         {
-            loadingRow.IsVisible = visible;
-            loadingIndicator.IsRunning = visible;
+            sendBtn.IsEnabled = enabled;
+        }
+
+        private void MessageEntry_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isAdjustingMessageEntryHeight)
+                return;
+
+            if (string.IsNullOrEmpty(e.NewTextValue))
+            {
+                ResetMessageEntryHeight();
+                return;
+            }
+
+            // Release any previous clamp so AutoSize can grow or shrink naturally,
+            // then SizeChanged will re-apply the cap if needed.
+            if (messageEntry.HeightRequest > 0)
+                messageEntry.HeightRequest = -1;
+        }
+
+        private void MessageEntry_SizeChanged(object sender, EventArgs e)
+        {
+            if (_isAdjustingMessageEntryHeight || messageEntry.Height <= 0)
+                return;
+
+            if (_defaultMessageEntryHeight <= 0 || string.IsNullOrEmpty(messageEntry.Text))
+            {
+                _defaultMessageEntryHeight = messageEntry.Height;
+            }
+
+            ApplyMessageEntryHeightLimit();
+        }
+
+        private void UpdateMessageEntryHeightLimit(double availablePageHeight)
+        {
+            double relativeMaxHeight = availablePageHeight * 0.28;
+            double minimumAllowedHeight = _defaultMessageEntryHeight > 0 ? _defaultMessageEntryHeight : 72;
+            _maxMessageEntryHeight = Math.Max(minimumAllowedHeight, Math.Min(relativeMaxHeight, 220));
+            ApplyMessageEntryHeightLimit();
+        }
+
+        private void ApplyMessageEntryHeightLimit()
+        {
+            if (_isAdjustingMessageEntryHeight || _maxMessageEntryHeight <= 0)
+                return;
+
+            _isAdjustingMessageEntryHeight = true;
+            try
+            {
+                if (messageEntry.Height > _maxMessageEntryHeight)
+                {
+                    messageEntry.HeightRequest = _maxMessageEntryHeight;
+                }
+                else if (messageEntry.HeightRequest > 0)
+                {
+                    messageEntry.HeightRequest = -1;
+                }
+            }
+            finally
+            {
+                _isAdjustingMessageEntryHeight = false;
+            }
+        }
+
+        private void ResetMessageEntryHeight()
+        {
+            if (messageEntry == null)
+                return;
+
+            messageEntry.HeightRequest = -1;
         }
 
         /// <summary>
         /// Scrolls the messages list to the very last item.
-        /// Wrapped in a try/catch because CollectionView.ScrollTo can silently
-        /// fail on some Android API levels when the list is empty.
         /// </summary>
         private async Task ScrollToBottomAsync()
         {
@@ -242,18 +338,13 @@ namespace manipulatorMobileApp.Views
             {
                 if (Messages.Count > 0)
                 {
-                    // Small delay lets the layout engine measure the new cell first.
-                    await Task.Delay(80);
+                    await Task.Delay(60);
                     messagesList.ScrollTo(Messages[Messages.Count - 1],
                         position: ScrollToPosition.End, animate: true);
-
-                    // Also scroll the outer ScrollView to the bottom.
-                    await messagesScrollView.ScrollToAsync(0, messagesScrollView.ContentSize.Height, false);
                 }
             }
             catch
             {
-                // Non-critical — user can scroll manually.
             }
         }
     }
