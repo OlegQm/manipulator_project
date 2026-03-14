@@ -202,8 +202,8 @@ namespace manipulatorMobileApp.Views
                 imageBase64 = Convert.ToBase64String(_imageBytes);
                 _imageSent = true;
 
-                // Hide the "image will be attached" hint after first send
-                imageHintFrame.IsVisible = false;
+                // Remove the header completely so it doesn't leave empty space at the top.
+                messagesList.Header = null;
             }
 
             string botResponse;
@@ -359,7 +359,7 @@ namespace manipulatorMobileApp.Views
                 {
                     await Task.Delay(60);
                     messagesList.ScrollTo(Messages[Messages.Count - 1],
-                        position: ScrollToPosition.MakeVisible, animate: true);
+                        position: ScrollToPosition.End, animate: false);
                 }
             }
             catch

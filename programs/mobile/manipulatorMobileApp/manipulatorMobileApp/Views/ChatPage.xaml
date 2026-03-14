@@ -16,7 +16,6 @@
                         Margin="0,6,0,0"
                         SelectionMode="None"
                         VerticalOptions="FillAndExpand"
-                        ItemsUpdatingScrollMode="KeepLastItemInView"
                         ItemSizingStrategy="MeasureAllItems">
             <CollectionView.Header>
                 <Frame x:Name="imageHintFrame"
