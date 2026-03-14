@@ -88,6 +88,7 @@ class TelegramServer:
                 text,
                 self.handle_switch_flashlight_mode
             )
+
     def run(self):
         self.initialize_last_update_id()
         print("Starting server...")
