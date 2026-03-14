@@ -1,5 +1,6 @@
 using manipulatorMobileApp.Models;
 using manipulatorMobileApp.Services;
+using manipulatorMobileApp.Controls;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -271,9 +272,12 @@ namespace manipulatorMobileApp.Views
                 return;
             }
 
-            // Release any previous clamp so AutoSize can grow or shrink naturally,
-            // then SizeChanged will re-apply the cap if needed.
-            if (messageEntry.HeightRequest > 0)
+            bool textShrank = (e.OldTextValue?.Length ?? 0) > (e.NewTextValue?.Length ?? 0);
+
+            // Only release the clamp when the text shrinks. Releasing it on every
+            // keystroke causes repeated re-measure loops once the editor is already
+            // capped, which is what makes long runs of blank lines feel frozen.
+            if (messageEntry.HeightRequest > 0 && textShrank)
                 messageEntry.HeightRequest = -1;
         }
 
@@ -309,10 +313,16 @@ namespace manipulatorMobileApp.Views
                 if (messageEntry.Height > _maxMessageEntryHeight)
                 {
                     messageEntry.HeightRequest = _maxMessageEntryHeight;
+                    SetMessageEntryScrollEnabled(true);
                 }
                 else if (messageEntry.HeightRequest > 0)
                 {
                     messageEntry.HeightRequest = -1;
+                    SetMessageEntryScrollEnabled(false);
+                }
+                else
+                {
+                    SetMessageEntryScrollEnabled(false);
                 }
             }
             finally
@@ -327,6 +337,15 @@ namespace manipulatorMobileApp.Views
                 return;
 
             messageEntry.HeightRequest = -1;
+            SetMessageEntryScrollEnabled(false);
+        }
+
+        private void SetMessageEntryScrollEnabled(bool enabled)
+        {
+            if (messageEntry is ChatInputEditor chatInputEditor)
+            {
+                chatInputEditor.IsInternalScrollEnabled = enabled;
+            }
         }
 
         /// <summary>
@@ -340,7 +359,7 @@ namespace manipulatorMobileApp.Views
                 {
                     await Task.Delay(60);
                     messagesList.ScrollTo(Messages[Messages.Count - 1],
-                        position: ScrollToPosition.End, animate: true);
+                        position: ScrollToPosition.MakeVisible, animate: true);
                 }
             }
             catch

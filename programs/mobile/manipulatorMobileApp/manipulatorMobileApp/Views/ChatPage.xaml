@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:manipulatorMobileApp.Controls"
              x:Class="manipulatorMobileApp.Views.ChatPage"
              BackgroundColor="#111111"
              Title="Chat">
@@ -90,16 +91,16 @@
                    BackgroundColor="#2C2C2E"
                    HasShadow="False"
                    Margin="0,0,8,0">
-                <Editor x:Name="messageEntry"
-                        Placeholder="Ask about the image…"
-                        PlaceholderColor="#666666"
-                        TextColor="White"
-                        BackgroundColor="Transparent"
-                        AutoSize="TextChanges"
-                        SizeChanged="MessageEntry_SizeChanged"
-                        TextChanged="MessageEntry_TextChanged"
-                        VerticalOptions="Center"
-                        MaxLength="2000"/>
+                <controls:ChatInputEditor x:Name="messageEntry"
+                                          Placeholder="Ask about the image…"
+                                          PlaceholderColor="#666666"
+                                          TextColor="White"
+                                          BackgroundColor="Transparent"
+                                          AutoSize="TextChanges"
+                                          SizeChanged="MessageEntry_SizeChanged"
+                                          TextChanged="MessageEntry_TextChanged"
+                                          VerticalOptions="Center"
+                                          MaxLength="2000"/>
             </Frame>
 
             <Button Grid.Column="1"
@@ -113,7 +114,7 @@
                     WidthRequest="48"
                     HeightRequest="48"
                     Padding="0"
-                    VerticalOptions="End"
+                    VerticalOptions="Start"
                     Clicked="SendBtn_Clicked"/>
         </Grid>
     </Grid>
