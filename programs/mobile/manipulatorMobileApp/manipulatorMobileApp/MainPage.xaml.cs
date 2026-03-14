@@ -1,4 +1,5 @@
-﻿using manipulatorMobileApp.Models;
+﻿using manipulatorMobileApp.Helpers;
+using manipulatorMobileApp.Models;
 using manipulatorMobileApp.Views;
 using System;
 using System.Linq;
@@ -28,6 +29,7 @@ namespace manipulatorMobileApp
         public MainPage()
         {
             InitializeComponent();
+            SafeAreaHelper.Apply(this);
         }
 
         protected override async void OnAppearing()

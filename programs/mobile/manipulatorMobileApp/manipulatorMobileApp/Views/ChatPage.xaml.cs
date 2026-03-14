@@ -1,6 +1,7 @@
 using manipulatorMobileApp.Models;
 using manipulatorMobileApp.Services;
 using manipulatorMobileApp.Controls;
+using manipulatorMobileApp.Helpers;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -62,6 +63,7 @@ namespace manipulatorMobileApp.Views
         public ChatPage(byte[] imageBytes, string chatbotUrl, string authUser, string authPass)
         {
             InitializeComponent();
+            SafeAreaHelper.Apply(this);
             _imageBytes = imageBytes;
             _chatbotUrl = chatbotUrl;
             _authUser = authUser ?? string.Empty;

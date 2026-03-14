@@ -66,6 +66,7 @@
     <Compile Include="FileHelperiOS.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
+    <Compile Include="Renderers\ChatInputEditorRenderer.cs" />
     <Compile Include="ToastIOS.cs" />
     <None Include="Entitlements.plist" />
     <None Include="Info.plist" />
@@ -156,5 +157,8 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\api_key.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Renderers\" />
   </ItemGroup>
 </Project>

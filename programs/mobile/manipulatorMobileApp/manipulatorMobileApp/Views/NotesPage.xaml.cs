@@ -32,6 +32,7 @@ namespace manipulatorMobileApp.Views
         public NotesPage(string botToken, string chatID)
         {
             InitializeComponent();
+            SafeAreaHelper.Apply(this);
             this.botToken = botToken;
             this.chatID = chatID;
         }

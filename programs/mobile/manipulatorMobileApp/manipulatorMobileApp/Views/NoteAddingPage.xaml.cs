@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using manipulatorMobileApp.Helpers;
 using manipulatorMobileApp.Models;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -20,6 +21,7 @@ namespace manipulatorMobileApp.Views
         public NoteAddingPage()
         {
             InitializeComponent();
+            SafeAreaHelper.Apply(this);
 
             BindingContext = new Record();
         }

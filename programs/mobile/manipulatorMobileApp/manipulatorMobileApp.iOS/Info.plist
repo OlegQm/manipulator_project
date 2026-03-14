@@ -36,5 +36,10 @@
 		<string>Assets.xcassets/AppIcon.appiconset</string>
 		<key>NSCameraUsageDescription</key>
 		<string>We are using the camera to make objects photos</string>
+		<key>NSAppTransportSecurity</key>
+		<dict>
+			<key>NSAllowsArbitraryLoads</key>
+			<true/>
+		</dict>
 	</dict>
 </plist>

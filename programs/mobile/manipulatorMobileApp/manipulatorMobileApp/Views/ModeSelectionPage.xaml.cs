@@ -1,4 +1,5 @@
 ﻿using System;
+using manipulatorMobileApp.Helpers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -21,6 +22,7 @@ namespace manipulatorMobileApp.Views
             string chatbotAuthPassword = null)
         {
             InitializeComponent();
+            SafeAreaHelper.Apply(this);
             this.token = token;
             this.chatID = chatID;
             this.chatbotUrl = chatbotUrl;

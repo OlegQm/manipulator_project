@@ -35,6 +35,7 @@ namespace manipulatorMobileApp.Views
             string chatbotUrl = null, string chatbotAuthUser = null, string chatbotAuthPassword = null)
         {
             InitializeComponent();
+            SafeAreaHelper.Apply(this);
             ChatButton.IsEnabled = false;
             this.botToken = botToken;
             this.chatID = chatID;
