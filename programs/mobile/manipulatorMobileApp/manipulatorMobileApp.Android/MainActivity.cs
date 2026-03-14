@@ -19,17 +19,52 @@ namespace manipulatorMobileApp.Droid
 
             Window.ClearFlags(WindowManagerFlags.LayoutNoLimits | WindowManagerFlags.TranslucentStatus);
             Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
-
-            var content = FindViewById(Android.Resource.Id.Content);
-            if (content != null)
-            {
-                content.SetFitsSystemWindows(true);
-            }
+            ApplyStatusBarInset();
         }
+
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+        private void ApplyStatusBarInset()
+        {
+            if ((int)Build.VERSION.SdkInt < 35)
+            {
+                return;
+            }
+
+            var content = FindViewById<ViewGroup>(Android.Resource.Id.Content);
+            var root = content?.GetChildAt(0);
+            if (root == null)
+            {
+                return;
+            }
+
+            int statusBarHeight = GetStatusBarHeight();
+            if (statusBarHeight <= 0)
+            {
+                return;
+            }
+
+            root.SetPadding(
+                root.PaddingLeft,
+                root.PaddingTop + statusBarHeight,
+                root.PaddingRight,
+                root.PaddingBottom
+            );
+        }
+
+        private int GetStatusBarHeight()
+        {
+            int resourceId = Resources?.GetIdentifier("status_bar_height", "dimen", "android") ?? 0;
+            if (resourceId <= 0)
+            {
+                return 0;
+            }
+
+            return Resources.GetDimensionPixelSize(resourceId);
         }
     }
 }
