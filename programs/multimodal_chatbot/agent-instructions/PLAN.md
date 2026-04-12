@@ -135,7 +135,7 @@ Environment variables exposed via `Settings`:
 - `SessionCreateResponse`: `session_id: str`, `created_at: datetime`
 - `SessionInfoResponse`: `session_id: str`, `created_at: datetime`, `last_activity: datetime`, `message_count: int`
 - `SessionDeleteResponse`: `session_id: str`, `deleted: bool`
-- `ChatMessageRecord`: `role: str`, `content: str`, `timestamp: datetime`
+- `ChatMessageRecord`: `role: str`, `content: str`, `has_image: bool`, `image_id: Optional[str]`, `timestamp: datetime`
 
 ### Step 2.2 — Redis session service (`app/services/session_manager.py`)
 
@@ -147,8 +147,10 @@ Methods:
 - `create_session() -> str` — generate UUID4, store meta hash
 - `session_exists(session_id) -> bool`
 - `get_session_info(session_id) -> SessionInfoResponse`
-- `add_message(session_id, role, content, image_b64?) -> None` — append to list, update `last_activity`
+- `add_message(session_id, role, content, has_image=False, image_id=None) -> None` — append to list, update `last_activity`
 - `get_history(session_id) -> list[ChatMessageRecord]`
+- `store_image(session_id, image_b64) -> str` — store image in Redis and return `image_id`
+- `get_image(session_id, image_id) -> Optional[str]`
 - `count_tokens(session_id) -> int` — tiktoken encode full conversation
 - `check_token_limit(session_id) -> bool` — True if within `MAX_CONTEXT_TOKENS`
 - `delete_session(session_id) -> bool`
@@ -193,7 +195,14 @@ Flow:
 
 Public function:
 ```python
-async def invoke_agent(history: list[ChatMessageRecord], user_message: str, image_b64: Optional[str]) -> str
+async def invoke_agent(
+    settings: Settings,
+    history: list[ChatMessageRecord],
+    user_message: str,
+    session_id: str,
+    image_id: Optional[str] = None,
+    image_url: Optional[str] = None,
+) -> str
 ```
 
 ---
@@ -221,13 +230,18 @@ Deletes session. Returns `SessionDeleteResponse`.
 
 ### `POST /api/v1/chat`
 **Request**: `ChatRequest`  
+Client sends only `session_id`, current `message`, and optional `image` or `image_url`.
+The service loads prior conversation history from Redis by `session_id`; clients do not
+send history in the request body.
+
 **Flow**:
 1. Validate session exists → `404` if not
 2. Check token limit → `409 TokenLimitExceededResponse` if exceeded
-3. Store user message in Redis
-4. Invoke LangGraph agent with full history
-5. Store assistant response in Redis
-6. Return `ChatResponse` with token stats
+3. Store image in Redis if present
+4. Store user message in Redis
+5. Load session history from Redis and invoke LangGraph agent with it
+6. Store assistant response in Redis
+7. Return `ChatResponse` with token stats
 
 ---
 

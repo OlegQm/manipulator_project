@@ -58,6 +58,9 @@ curl -u admin:password -X POST http://localhost/api/v1/sessions
 
 ### Send a text message
 
+The client sends only the current message. The service loads the existing
+conversation history from Redis by `session_id`.
+
 ```bash
 curl -u admin:password -X POST http://localhost/api/v1/chat \
   -H "Content-Type: application/json" \
@@ -74,6 +77,9 @@ curl -u admin:password -X POST http://localhost/api/v1/chat \
 ```
 
 ### Get chat history
+
+This endpoint is optional for clients that need to display or debug the stored
+conversation. It is not required when sending messages to `/api/v1/chat`.
 
 ```bash
 curl -u admin:password http://localhost/api/v1/sessions/abc-123.../history

@@ -69,7 +69,8 @@ Get metadata for an existing session.
 
 ### `GET /api/v1/sessions/{session_id}/history`
 
-Retrieve full chat history for a session.
+Retrieve full chat history for a session. This endpoint is optional for client
+display/debug use; clients do not send this history back to `/api/v1/chat`.
 
 **Response** (200):
 ```json
@@ -111,6 +112,9 @@ Delete a session and all its messages.
 
 Send a message (optionally with an image) to the chatbot agent.
 
+The request contains only the current user message. FastAPI loads the stored
+conversation history from Redis by `session_id` before invoking the agent.
+
 **Request Body**:
 ```json
 {
@@ -129,6 +133,7 @@ Send a message (optionally with an image) to the chatbot agent.
 | `image_url` | string (URL) | No | Public URL of an image |
 
 > `image` and `image_url` are mutually exclusive. Send at most one.
+> Do not include chat history in this request body.
 
 **Response** (200):
 ```json

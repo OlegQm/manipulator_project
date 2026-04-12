@@ -35,13 +35,13 @@ Mobile App
 
 ## Request Flow (POST /api/v1/chat)
 
-1. **Client** sends `session_id`, `message`, optional `image` (base64)
+1. **Client** sends `session_id`, current `message`, optional `image` (base64) or `image_url`
 2. **Nginx** validates basic auth → proxies to FastAPI
 3. **FastAPI** validates session exists in Redis
 4. **FastAPI** checks token count (tiktoken) — returns 409 if limit exceeded
 5. **FastAPI** stores image in Redis (if present) → receives `image_id`
 6. **FastAPI** stores user message in Redis
-7. **FastAPI** builds LangChain message list from session history; annotates message with `[image_id:...]` and `[session_id:...]` markers (image is NOT embedded in context)
+7. **FastAPI** loads prior session history from Redis, builds LangChain message list, and annotates the active image with `[image_id:...]` and `[session_id:...]` markers (image is NOT embedded in context)
 8. **LangGraph agent** receives messages, calls `analyze_image` tool with `session_id` + `image_id`
 9. **Tool** fetches base64 image from Redis, sends it to the vision model, returns description
 10. **Agent** formulates final response incorporating the tool result

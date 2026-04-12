@@ -14,7 +14,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.routers import chat, health, session, warehouse
+from app.routers import chat, health, session
 from app.services.cleanup import start_cleanup_scheduler, stop_cleanup_scheduler
 from app.services.session_manager import SessionManager, set_session_manager
 
@@ -109,7 +109,6 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(session.router)
     app.include_router(chat.router)
-    app.include_router(warehouse.router)  # TO DELETE: remove this line and app/routers/warehouse.py
 
     return app
 
