@@ -62,9 +62,9 @@ def build_agent_graph(settings: Settings) -> StateGraph:
     )
     llm_with_tools = llm.bind_tools(AGENT_TOOLS)
 
-    def agent_node(state: MessagesState) -> dict:
+    async def agent_node(state: MessagesState) -> dict:
         """Call the LLM with the current messages and bound tools."""
-        response = llm_with_tools.invoke(state["messages"])
+        response = await llm_with_tools.ainvoke(state["messages"])
         return {"messages": [response]}
 
     def should_continue(state: MessagesState) -> str:
