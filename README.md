@@ -6,8 +6,8 @@ This is a solo project by **Oleh Savchenko** focused on building a self-made aut
 
 ## 📷 Photos
 
-![image](https://github.com/user-attachments/assets/40056989-6e84-4b2b-adb6-74e7e2116489)
-![image](https://github.com/user-attachments/assets/45d18611-813d-4b63-b7f0-def2c072c46d)
+<img width="1920" height="1080" alt="bird_photo_for_readme_1" src="https://github.com/user-attachments/assets/3c9d5385-0a83-4f27-81d5-20a131e22268" />
+<img width="1920" height="1080" alt="bird_photo_for_readme_2" src="https://github.com/user-attachments/assets/16c8b461-5542-4c83-aeed-d534cf7fc98f" />
 
 ---
 
@@ -67,7 +67,7 @@ The Raspberry Pi is the main compute node for on-device vision and control scrip
 * **Display**
 * **Power button**
 
-![image](https://github.com/user-attachments/assets/609eaace-a846-4e91-b363-97ee4fb4dc34)
+<img width="960" height="469" alt="raspberry_pi_newest_device" src="https://github.com/user-attachments/assets/a0ebe9d5-7ac2-4496-8fee-5f7f11fc7747" />
 
 ---
 
@@ -78,7 +78,7 @@ The project uses the Hailo AI Kit as a hardware accelerator for real-time detect
 * **Raspberry Pi CPU**: YOLOv8n at 256×256 resolution → \~9 FPS
 * **Hailo AI Kit**: YOLOv8m at 640×640 resolution → >100 FPS
 
-![image](https://github.com/user-attachments/assets/30269dce-7b4b-4198-aa8d-8022412a04c2)
+<img width="960" height="475" alt="ai_kit_newest_device" src="https://github.com/user-attachments/assets/b43d1d7e-1a86-497d-99d5-a80d432c783f" />
 
 ---
 
@@ -86,7 +86,7 @@ The project uses the Hailo AI Kit as a hardware accelerator for real-time detect
 
 The mechanical design combines EEZYbotARM-based parts (purple) with custom printed components (black) adapted for this build.
 
-![image](https://github.com/user-attachments/assets/fd1c634f-6133-43cd-9727-adaeeecfe192)
+<img width="1406" height="789" alt="image" src="https://github.com/user-attachments/assets/8dba7685-7203-4984-bdfc-46ad615ef59f" />
 
 ---
 
