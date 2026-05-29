@@ -1,6 +1,6 @@
 # Autonomous Object Recognition Manipulator
 
-This is a solo project by **Oleh Savchenko**, aimed at creating a fully autonomous, self-built device capable of recognizing objects selected via a custom mobile application. The system integrates hardware components, AI-driven object detection, and intuitive user interaction through a mobile interface.
+This is a solo project by **Oleh Savchenko** focused on building a self-made autonomous manipulator that can detect objects and react to user commands from a mobile app. The repository now combines hardware control, on-device vision, mobile UX, and a separate multimodal chatbot service for image Q&A.
 
 ---
 
@@ -18,14 +18,15 @@ This is a solo project by **Oleh Savchenko**, aimed at creating a fully autonomo
 │   └── [3D models for printing device components]
 ├── programs
 │   ├── arduino
-│   │   ├── servos                     # Code for servo motors
-│   │   └── old/esp32                  # Deprecated ESP32 camera code
+│   │   ├── servos_and_led             # Servo + LED control sketch
+│   │   └── old/esp32                  # Legacy ESP32 camera code
 │   ├── mobile
 │   │   └── manipulatorMobileApp       # Mobile app source code
-│   └── objects_detection    
+│   ├── multimodal_chatbot             # FastAPI + LangGraph image Q&A service
+│   └── objects_detection
 │       ├── pt_to_hef_converter        # Convert trained models to HEF format
-│       ├── robotic_arm_scripts        # Scripts with robotic arm logic
-│       └── custom_model               # Own object detection model architecture and layers
+│       ├── robotic_arm_scripts        # Raspberry Pi + Hailo runtime scripts
+│       └── custom_model               # Custom YOLO model configs and training assets
 └── README.md
 ```
 
@@ -35,21 +36,23 @@ Contains all 3D-printable models for assembling the manipulator device.
 
 ### programs
 
-* **arduino**: Arduino sketches for controlling servo motors and legacy ESP32 camera modules.
-* **mobile/manipulatorMobileApp**: Source code for the mobile application that sends commands and receives results from the device.
-* **objects\_recognition**: Python scripts and configurations for object detection on a Raspberry Pi.
-* **pt\_to\_hef\_converter**: Utility to convert PyTorch-trained models into HEF format optimized for the Hailo AI Kit accelerator.
+* **arduino**: Arduino sketches for low-level manipulator control (servos/LED) and archived ESP32 experiments.
+* **mobile/manipulatorMobileApp**: Xamarin.Forms mobile client (Android/iOS) used to configure bot access, send commands, and work with detected object lists.
+* **objects\_detection**: Raspberry Pi object detection stack, custom model assets, and scripts for manipulator interaction.
+* **multimodal\_chatbot**: Dockerized FastAPI service (LangGraph-based) that accepts text + image and returns responses, with Redis sessions and Nginx basic auth.
 
 ---
 
 ## 🌐 System Workflow
 
-1. **User Request**: The user sends a query via the mobile app, asking which objects the device sees.
-2. **Server**: A server program receives the request and forwards it to the object recognition module.
-3. **Object Detection**: The recognition module processes the camera feed, detects objects, and returns an annotated image plus a list of detected items.
-4. **User Selection**: The mobile app displays the list, and the user selects the desired object.
-5. **Command Dispatch**: The selection is sent back through the same pipeline to the recognition module.
-6. **Actuation**: The recognition module signals the Arduino, which activates servo motors to physically track the chosen object.
+1. **User Request**: The user sends a command from the mobile app (for example, request screenshot / object list / selection).
+2. **Bot Transport Layer**: Communication is currently handled through Telegram bot endpoints to keep infrastructure simple and low-cost.
+3. **Detection Runtime**: The Raspberry Pi module in `programs/objects_detection/robotic_arm_scripts` runs inference (with Hailo acceleration when enabled).
+4. **Result Delivery**: The app receives an image and/or recognized object names and renders them for user interaction.
+5. **Selection Command**: The user chooses an object or action, and the command is sent back through the same channel.
+6. **Actuation**: The detection/control side sends control signals to Arduino logic that drives the manipulator servos.
+
+In parallel, the repository also includes `programs/multimodal_chatbot`, a standalone API flow for image + text question answering.
 
 ![image](https://github.com/user-attachments/assets/57ca8aa4-502c-43f5-a355-dea349cb5c62)
 
@@ -57,7 +60,7 @@ Contains all 3D-printable models for assembling the manipulator device.
 
 ## 🍓 Raspberry Pi
 
-The Raspberry Pi serves as an energy-efficient and high-performance computer for object recognition. It interfaces with:
+The Raspberry Pi is the main compute node for on-device vision and control scripts. In the current setup, it works as the bridge between camera inference and actuator logic, and interfaces with:
 
 * **Battery pack**
 * **Arduino**
@@ -70,7 +73,7 @@ The Raspberry Pi serves as an energy-efficient and high-performance computer for
 
 ## 🤖 Hailo AI Kit
 
-The project leverages the Hailo AI Kit, a specialized accelerator for object detection tasks. Benchmark results:
+The project uses the Hailo AI Kit as a hardware accelerator for real-time detection. The measured project-level comparison remains:
 
 * **Raspberry Pi CPU**: YOLOv8n at 256×256 resolution → \~9 FPS
 * **Hailo AI Kit**: YOLOv8m at 640×640 resolution → >100 FPS
@@ -81,7 +84,7 @@ The project leverages the Hailo AI Kit, a specialized accelerator for object det
 
 ## 🖨️ 3D Models
 
-The device uses 3D models from the EEZYbotARM project (purple components) and custom-designed parts (black components).
+The mechanical design combines EEZYbotARM-based parts (purple) with custom printed components (black) adapted for this build.
 
 ![image](https://github.com/user-attachments/assets/fd1c634f-6133-43cd-9727-adaeeecfe192)
 
@@ -89,21 +92,20 @@ The device uses 3D models from the EEZYbotARM project (purple components) and cu
 
 ## 📱 Mobile Application
 
-Communication between the app and device is handled via Telegram bots (to minimize costs). Setup steps:
+The mobile client is implemented with Xamarin.Forms and currently communicates with the device via Telegram bots. Typical setup:
 
 1. Create two bots in a single chat:
 
-   * **Manipulator bot** (connected to the device)
-   * **User bot** (connected to the mobile app)
-2. In the app, enter the bot token and chat ID.
-3. Choose one of two modes:
+   * **Manipulator bot** (device-side command receiver)
+   * **User bot** (app-side interaction bot)
+2. In the app, provide bot token and chat ID in the server settings screen.
+3. Choose one of two operation modes:
 
-   * **List Selection**: Filter and select objects from a predefined list.
-   * **Live Recognition**: Select from objects currently visible to the device.
-4. Send your request and view results.
+   * **Objects List**: Manage/filter object names and send direct selection commands.
+   * **Possible Objects**: Request fresh screenshot + caption from the device and pick from currently detected items.
+4. Send a request, review response, and dispatch selection/search commands.
 
-Users can filter objects by name or by photo (helpful if you forget an object’s name).
+The app also supports object filtering by text prompt and by photo, which helps when the exact object name is unknown.
 
 ![image](https://github.com/user-attachments/assets/8ac4c757-1b7f-4d4a-bab2-d2177b3967b6)
 ![image](https://github.com/user-attachments/assets/6fb6a896-f102-4f7c-91d7-303cb5345019)
-
