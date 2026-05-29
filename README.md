@@ -86,7 +86,7 @@ The project uses the Hailo AI Kit as a hardware accelerator for real-time detect
 
 The mechanical design combines EEZYbotARM-based parts (purple) with custom printed components (black) adapted for this build.
 
-<img width="1406" height="789" alt="image" src="https://github.com/user-attachments/assets/8dba7685-7203-4984-bdfc-46ad615ef59f" />
+<img width="1647" height="924" alt="image" src="https://github.com/user-attachments/assets/9f899904-bf0e-4698-b7d2-a17ea22b1f60" />
 
 ---
 
