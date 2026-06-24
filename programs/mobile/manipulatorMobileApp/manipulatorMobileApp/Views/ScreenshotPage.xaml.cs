@@ -192,8 +192,8 @@ namespace manipulatorMobileApp.Views
         }
 
         /// <summary>
-        /// Opens the chatbot chat page. The button is only active after an image has been
-        /// received from Telegram (<see cref="_imageBytes"/> is not null).
+        /// Opens the chatbot chat page with the currently displayed image.
+        /// Before a real Telegram screenshot is received, the built-in placeholder is used.
         /// Validates that chatbot connection settings are configured before navigating.
         /// </summary>
         private async void ChatButton_Clicked(object sender, EventArgs e)

@@ -49,9 +49,19 @@ async def analyze_image(session_id: str, image_id: str, question: str) -> str:
         max_tokens=1024,
     )
 
+    image_question = (
+        "Answer the user's question using the attached image. "
+        "If the question is a short follow-up such as 'describe in more detail', "
+        "continue describing the same attached image in more detail now. "
+        "Do not ask the user to upload, crop, zoom, or confirm the image again. "
+        "Do not offer future actions instead of answering. "
+        "Do not say that the image is unavailable unless the image data cannot be read.\n\n"
+        f"User question: {question}"
+    )
+
     message = HumanMessage(
         content=[
-            {"type": "text", "text": question},
+            {"type": "text", "text": image_question},
             {
                 "type": "image_url",
                 "image_url": {
